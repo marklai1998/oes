@@ -6,12 +6,14 @@ import { PureUser } from "../../server/models/user";
 import { dayjs } from "../../server/utils/dayjs";
 import { login } from "../services/userApi/login";
 import constate from "constate";
+import { userState } from "../recoil/user";
+import { useRecoilState } from "recoil";
 
 export const [UserAuthProvider, useAuth] = constate(() => {
   const { fetchData: fetchUser } = useFetch(getUser);
   const { fetchData: performLogin } = useFetch(login);
 
-  const [user, setUser] = useState<null | PureUser>(null);
+  const [user, setUser] = useRecoilState(userState);
 
   const handleLogout = () => {
     localStorage.removeItem("id_token");

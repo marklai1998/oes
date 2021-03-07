@@ -1,12 +1,15 @@
 // import App from 'next/app'
 
+import { RecoilRoot } from "recoil";
 import { UserAuthProvider } from "../hooks/useAuth";
 
 function MyApp({ Component, pageProps }) {
   return (
-    <UserAuthProvider>
-      <Component {...pageProps} />
-    </UserAuthProvider>
+    <RecoilRoot>
+      <UserAuthProvider>
+        <Component {...pageProps} />
+      </UserAuthProvider>
+    </RecoilRoot>
   );
 }
 
