@@ -46,6 +46,7 @@ export const useFetch = <T extends any>(
       }
     } catch (e) {
       console.log(e);
+      handleLogout();
     }
   };
 
