@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { useAuth } from "../hooks/useAuth";
+import styled from "styled-components";
 
 const Header = () => {
   const { user, logout } = useAuth();
 
   return (
-    <header>
+    <Wrapper>
       <nav>
         <ul>
           <li>
@@ -55,13 +56,14 @@ const Header = () => {
           color: #fff;
           text-decoration: none;
         }
-        header {
-          color: #fff;
-          background-color: #333;
-        }
       `}</style>
-    </header>
+    </Wrapper>
   );
 };
 
 export default Header;
+
+const Wrapper = styled.header`
+  color: #fff;
+  background-color: #333;
+`;
