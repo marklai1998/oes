@@ -1,5 +1,6 @@
 import { useAuth } from "../hooks/useAuth";
 import Layout from "../components/layout";
+import { Button } from "antd";
 
 const Home = () => {
   const user = useAuth();
@@ -29,6 +30,7 @@ const Home = () => {
         </>
       )}
 
+      <Button>test</Button>
       <style jsx>{`
         li {
           margin-bottom: 0.5rem;

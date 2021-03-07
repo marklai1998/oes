@@ -2,6 +2,7 @@
 
 import { RecoilRoot } from "recoil";
 import { UserAuthProvider } from "../hooks/useAuth";
+import "antd/dist/antd.css";
 
 function MyApp({ Component, pageProps }) {
   return (
