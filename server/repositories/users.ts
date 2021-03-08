@@ -1,4 +1,4 @@
-import { User } from "./../models/user";
+import { PureUser } from "./../models/user";
 import user from "../models/user";
 import crypto from "crypto";
 import { userTierType } from "../constants/userTierType";
@@ -23,16 +23,17 @@ export const createUser = async ({
   });
 };
 
-export const findUser = async ({ id }: { id: string }) => user.findById(id);
+export const findUser = async ({ id }: { id: string }) =>
+  user.findById(id).lean();
 
 export const findUserByName = async ({ username }: { username: string }) =>
-  user.findOne({ username });
+  user.findOne({ username }).lean();
 
 export const validatePassword = ({
   user,
   inputPassword,
 }: {
-  user: User;
+  user: PureUser;
   inputPassword: string;
 }) => {
   const inputHash = crypto
@@ -41,3 +42,28 @@ export const validatePassword = ({
   const passwordsMatch = user.hash === inputHash;
   return passwordsMatch;
 };
+
+export const listUser = async ({
+  pageSize,
+  page,
+}: {
+  page: number;
+  pageSize: number;
+}) => {
+  const result = await user
+    .find()
+    .sort({
+      createdAt: 1,
+    })
+    .skip((page - 1) * pageSize)
+    .limit(pageSize)
+    .lean();
+
+  return {
+    list: result,
+    total: await user.countDocuments(),
+  };
+};
+
+export const updateUser = async (id: string, newValues: Partial<PureUser>) =>
+  user.findByIdAndUpdate(id, newValues);

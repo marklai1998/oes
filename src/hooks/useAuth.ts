@@ -1,5 +1,5 @@
 import { useFetch } from "./useFetch";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { getUser } from "../services/userApi/getUser";
 import { dayjs } from "../../server/utils/dayjs";
 import { login } from "../services/userApi/login";
@@ -8,6 +8,8 @@ import { userState } from "../recoil/user";
 import { useRecoilState } from "recoil";
 import { useLocalStorage } from "react-use";
 import * as R from "ramda";
+import { userTierType } from "../../server/constants/userTierType";
+import { message } from "antd";
 
 export const [UserAuthProvider, useAuth] = constate(() => {
   const { fetchData: fetchUser } = useFetch(getUser);
@@ -54,7 +56,7 @@ export const [UserAuthProvider, useAuth] = constate(() => {
     username: string;
     password: string;
   }) => {
-    const { result, success } = await performLogin({
+    const { result, success, error } = await performLogin({
       username,
       password,
     });
@@ -63,8 +65,21 @@ export const [UserAuthProvider, useAuth] = constate(() => {
       setIdToken(result.token);
       setTokenExpireAt(result.expires);
       await refreshUser();
+    } else {
+      error === "USER_NOT_FOUND" &&
+        message.error("Username or password mismatch");
     }
   };
+
+  const tiers = useMemo(() => {
+    const tier = user ? user.tier : undefined;
+
+    return {
+      isAdmin: tier === userTierType.ADMIN,
+      isStudent: tier === userTierType.STUDENT,
+      isTeacher: tier === userTierType.TEACHER,
+    };
+  }, [user]);
 
   return {
     user,
@@ -73,5 +88,6 @@ export const [UserAuthProvider, useAuth] = constate(() => {
     login: handleLogin,
     isLoggedIn: !R.isNil(idToken),
     isAuthing: !R.isNil(idToken) && !user,
+    ...tiers,
   };
 });

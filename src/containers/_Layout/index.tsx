@@ -11,14 +11,13 @@ import {
 import randomColor from "randomcolor";
 import Router from "next/router";
 import { PageLoading } from "../../components/PageLoading";
-import { userTierType } from "../../../server/constants/userTierType";
 
 type Props = {
   children: React.ReactNode;
 };
 
 export const Layout = ({ children }: Props) => {
-  const { user, logout, isAuthing, tier } = useAuth();
+  const { user, logout, isAuthing, isAdmin } = useAuth();
 
   return isAuthing ? (
     <PageLoading />
@@ -48,7 +47,7 @@ export const Layout = ({ children }: Props) => {
                   >
                     Profile
                   </Menu.Item>
-                  {tier === userTierType.ADMIN && (
+                  {isAdmin && (
                     <Menu.Item
                       icon={<UserOutlined />}
                       onClick={() => {

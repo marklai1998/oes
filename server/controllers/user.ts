@@ -1,3 +1,5 @@
+import { listUser, updateUser } from "./../repositories/users";
+import { userTierType } from "./../constants/userTierType";
 import Router from "@koa/router";
 import { Context, DefaultState } from "koa";
 import { checkAuth } from "../middlewares/checkAuth";
@@ -10,53 +12,50 @@ import { issueJWT } from "../utils/jwt";
 
 const router = new Router<DefaultState, Context>();
 
-router.get("/", checkAuth, (ctx) => {
-  try {
-    ctx.body = ctx.state.user;
-  } catch (e) {
-    console.error(e);
-    ctx.throw(500);
-  }
+router.get("/", checkAuth({}), (ctx) => {
+  ctx.body = { ...ctx.state.user };
+});
+
+router.patch("/", checkAuth({ tiers: [userTierType.ADMIN] }), async (ctx) => {
+  const {
+    request: { body },
+  } = ctx;
+
+  await updateUser(body._id, body.newValues);
+
+  ctx.body = "SUCCESS";
 });
 
 router.post("/login", async (ctx) => {
-  try {
-    const {
-      request: { body },
-    } = ctx;
+  const {
+    request: { body },
+  } = ctx;
 
-    const user = await findUserByName({ username: body.username });
-    if (!user) {
-      ctx.throw(401);
-    }
-
-    const match = validatePassword({ user, inputPassword: body.password });
-    if (!match) {
-      ctx.throw(401);
-    }
-
-    ctx.body = issueJWT(user);
-  } catch (error) {
-    console.error(error);
-    ctx.throw(500);
+  const user = await findUserByName({ username: body.username });
+  if (!user) {
+    ctx.throw(401, "USER_NOT_FOUND");
+    return;
   }
+
+  const match = validatePassword({ user, inputPassword: body.password });
+  if (!match) {
+    ctx.throw(401, "USER_NOT_FOUND");
+    return;
+  }
+
+  ctx.body = issueJWT(user);
 });
 
-router.get("/refreshToken", checkAuth, async (ctx) => {
-  try {
-    const user = ctx.state.user;
-    ctx.body = issueJWT(user);
-  } catch (error) {
-    console.error(error);
-    ctx.throw(500);
-  }
+router.get("/refreshToken", checkAuth({}), async (ctx) => {
+  const user = ctx.state.user;
+  ctx.body = issueJWT(user);
 });
 
 router.post("/register", async (ctx) => {
   if (!ctx.isAuthenticated()) {
     const { body } = ctx.request;
 
-    const user = findUserByName({ username: body.username });
+    const user = await findUserByName({ username: body.username });
     if (user) {
       ctx.throw(409, "USER_ALREADY_EXIST");
       return;
@@ -69,5 +68,19 @@ router.post("/register", async (ctx) => {
     ctx.throw(401);
   }
 });
+
+router.get(
+  "/list",
+  checkAuth({
+    tiers: [userTierType.ADMIN],
+  }),
+  async (ctx) => {
+    const { query } = ctx;
+    ctx.body = await listUser({
+      page: Number(query.page),
+      pageSize: Number(query.pagesize),
+    });
+  }
+);
 
 export default router;

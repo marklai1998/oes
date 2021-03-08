@@ -41,14 +41,9 @@ const App = async () => {
           secretOrKey: process.env.TOKEN_SECRET,
         },
         async (jwtPayload, done) => {
-          try {
-            const user = await findUser({ id: jwtPayload.sub });
-            if (user) done(null, user);
-            else done(new Error("Cannot find user"));
-          } catch (e) {
-            console.log(e);
-            done(e);
-          }
+          const user = await findUser({ id: jwtPayload.sub });
+          if (user) done(null, user);
+          else done(new Error("CANNOT_FIND_USER"));
         }
       )
     );
