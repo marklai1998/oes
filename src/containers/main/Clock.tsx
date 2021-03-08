@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Box, Title } from "../../components/Box";
-import { io } from "socket.io-client";
 import { dayjs } from "../../../server/utils/dayjs";
 import styled from "styled-components";
 import { useAuth } from "../../hooks/useAuth";
+import { useSocket } from "../../hooks/useSocket";
 
 export const Clock = () => {
   const { user } = useAuth();
   const [time, setTime] = useState(dayjs().toISOString());
+  const { socket } = useSocket();
 
   useEffect(() => {
-    const socket = io();
     socket.on("time", (time: string) => {
       setTime(time);
     });

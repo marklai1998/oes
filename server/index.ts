@@ -56,8 +56,8 @@ const App = async () => {
 
     io.attach(koa);
 
-    io.on("connection", (sock) => {
-      console.log("connected!");
+    io.on("connection", (socket) => {
+      console.log(socket.id, "connected!");
     });
 
     setInterval(() => {

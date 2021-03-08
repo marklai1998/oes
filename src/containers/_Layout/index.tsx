@@ -11,6 +11,7 @@ import {
 import randomColor from "randomcolor";
 import Router from "next/router";
 import { PageLoading } from "../../components/PageLoading";
+import { useSocket } from "../../hooks/useSocket";
 
 type Props = {
   children: React.ReactNode;
@@ -18,8 +19,9 @@ type Props = {
 
 export const Layout = ({ children }: Props) => {
   const { user, logout, isAuthing, isAdmin } = useAuth();
+  const { socket } = useSocket();
 
-  return isAuthing ? (
+  return isAuthing || !socket ? (
     <PageLoading />
   ) : (
     <>

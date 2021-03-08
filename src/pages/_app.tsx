@@ -6,6 +6,7 @@ import "antd/dist/antd.css";
 import { Layout } from "../containers/_Layout";
 import { createGlobalStyle } from "styled-components";
 import Head from "next/head";
+import { UserSocketProvider } from "../hooks/useSocket";
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -17,9 +18,11 @@ function MyApp({ Component, pageProps }) {
       <GlobalStyle />
       <RecoilRoot>
         <UserAuthProvider>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+          <UserSocketProvider>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </UserSocketProvider>
         </UserAuthProvider>
       </RecoilRoot>
     </>
