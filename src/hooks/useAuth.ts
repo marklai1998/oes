@@ -68,8 +68,10 @@ export const [UserAuthProvider, useAuth] = constate(() => {
 
   return {
     user,
+    tier: user && user.tier,
     logout: handleLogout,
     login: handleLogin,
     isLoggedIn: !R.isNil(idToken),
+    isAuthing: !R.isNil(idToken) && !user,
   };
 });

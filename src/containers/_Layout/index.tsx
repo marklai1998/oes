@@ -6,14 +6,18 @@ import { useAuth } from "../../hooks/useAuth";
 import { LogoutOutlined, ProfileOutlined } from "@ant-design/icons";
 import randomColor from "randomcolor";
 import Router from "next/router";
+import { PageLoading } from "../../components/PageLoading";
 
 type Props = {
   children: React.ReactNode;
 };
 
 export const Layout = ({ children }: Props) => {
-  const { user, logout } = useAuth();
-  return (
+  const { user, logout, isAuthing } = useAuth();
+
+  return isAuthing ? (
+    <PageLoading />
+  ) : (
     <>
       <ColorBackground />
       <Header>
