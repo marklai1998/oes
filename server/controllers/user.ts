@@ -1,4 +1,4 @@
-import { listUser, updateUser } from "./../repositories/users";
+import { getUserCount, listUser, updateUser } from "./../repositories/users";
 import { userTierType } from "./../constants/userTierType";
 import Router from "@koa/router";
 import { Context, DefaultState } from "koa";
@@ -80,6 +80,16 @@ router.get(
       page: Number(query.page),
       pageSize: Number(query.pagesize),
     });
+  }
+);
+
+router.get(
+  "/count",
+  checkAuth({
+    tiers: [userTierType.ADMIN],
+  }),
+  async (ctx) => {
+    ctx.body = await getUserCount();
   }
 );
 

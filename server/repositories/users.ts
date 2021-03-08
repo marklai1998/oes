@@ -2,6 +2,7 @@ import { PureUser } from "./../models/user";
 import user from "../models/user";
 import crypto from "crypto";
 import { userTierType } from "../constants/userTierType";
+import * as R from "ramda";
 
 export const createUser = async ({
   username,
@@ -67,3 +68,11 @@ export const listUser = async ({
 
 export const updateUser = async (id: string, newValues: Partial<PureUser>) =>
   user.findByIdAndUpdate(id, newValues);
+
+export const getUserCount = async () =>
+  Promise.all(
+    R.values(userTierType).map(async (tier) => ({
+      tier,
+      total: await user.countDocuments({ tier }),
+    }))
+  );

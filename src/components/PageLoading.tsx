@@ -44,6 +44,6 @@ const Wrapper = styled(Box)`
   background-color: #fff;
   padding: 40px 56px;
   border-radius: 8px;
-  color: rgb(44, 197, 189);
+  color: #1890ff;
   font-size: 80px;
 `;

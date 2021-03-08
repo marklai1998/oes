@@ -1,12 +1,15 @@
 import { Table } from "antd";
 import Router from "next/router";
 import { useEffect, useMemo, useState } from "react";
+import styled from "styled-components";
 import { PureUser } from "../../server/models/user";
 import { Box, Content, Title } from "../components/Box";
 import { ContentWrapper } from "../components/ContentWrapper";
+import { Spacer } from "../components/Spacer";
 import { getColumn } from "../containers/userList/tableMap";
 import { useAuth } from "../hooks/useAuth";
 import { useFetch } from "../hooks/useFetch";
+import { getUserCount } from "../services/userApi/getUserCount";
 import { updateUser } from "../services/userApi/updateUser";
 import { userList } from "../services/userApi/userList";
 
@@ -18,16 +21,27 @@ const UserList = () => {
     fallBackValue: { list: [], total: 0 },
   });
   const { fetchData: handleUpdateUser } = useFetch(updateUser);
+  const { fetchData: fetchUserCount, data: userCount } = useFetch(
+    getUserCount,
+    {
+      fallBackValue: [],
+    }
+  );
 
   useEffect(() => {
     (!isLoggedIn || !isAdmin) && Router.push("/");
   }, [isLoggedIn, isAdmin]);
 
-  useEffect(() => {
+  const refreshCurrent = () => {
     fetchData({
       page,
       pageSize,
     });
+    fetchUserCount();
+  };
+
+  useEffect(() => {
+    refreshCurrent();
   }, [page, pageSize]);
 
   const handlePageChange = (current: number, size: number) => {
@@ -38,11 +52,7 @@ const UserList = () => {
   const handelUpdate = async (_id: string, newValues: Partial<PureUser>) => {
     const { success } = await handleUpdateUser(_id, newValues);
 
-    success &&
-      fetchData({
-        page,
-        pageSize,
-      });
+    success && refreshCurrent();
   };
 
   const columns = useMemo(
@@ -55,6 +65,15 @@ const UserList = () => {
 
   return (
     <ContentWrapper>
+      <UserCountList>
+        {(userCount || []).map(({ tier, total }) => (
+          <CountItem key={tier}>
+            <Tier>{tier}</Tier>
+            <Count>{total}</Count>
+          </CountItem>
+        ))}
+      </UserCountList>
+      <Spacer />
       <Box>
         <Title>User List</Title>
         <Content>
@@ -81,3 +100,33 @@ const UserList = () => {
 };
 
 export default UserList;
+
+const UserCountList = styled.div`
+  display: flex;
+
+  & ${Box} {
+    width: 100%;
+    margin: 0 16px;
+  }
+
+  & ${Box}:first-child {
+    margin: 0 16px 0 0;
+  }
+
+  & ${Box}:last-child {
+    margin: 0 0 0 16px;
+  }
+`;
+
+const CountItem = styled(Box)`
+  padding: 8px 16px;
+`;
+
+const Tier = styled.div`
+  color: #1890ff;
+  font-size: 20px;
+`;
+
+const Count = styled.div`
+  font-size: 16px;
+`;
