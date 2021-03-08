@@ -3,16 +3,34 @@
 import { RecoilRoot } from "recoil";
 import { UserAuthProvider } from "../hooks/useAuth";
 import "antd/dist/antd.css";
+import { Layout } from "../containers/_Layout";
+import { createGlobalStyle } from "styled-components";
+import Head from "next/head";
 
 function MyApp({ Component, pageProps }) {
   return (
-    <RecoilRoot>
-      <UserAuthProvider>
-        <Component {...pageProps} />
-      </UserAuthProvider>
-    </RecoilRoot>
+    <>
+      <Head>
+        <link rel="shortcut icon" href="/static/favicon.ico" />
+        <title>Onscreen Exam System</title>
+      </Head>
+      <GlobalStyle />
+      <RecoilRoot>
+        <UserAuthProvider>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </UserAuthProvider>
+      </RecoilRoot>
+    </>
   );
 }
+
+const GlobalStyle = createGlobalStyle`
+body{
+  background-color:#f9f9f9;
+}
+`;
 
 // Only uncomment this method if you have blocking data requirements for
 // every single page in your application. This disables the ability to

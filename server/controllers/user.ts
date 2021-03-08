@@ -54,7 +54,17 @@ router.get("/refreshToken", checkAuth, async (ctx) => {
 
 router.post("/register", async (ctx) => {
   if (!ctx.isAuthenticated()) {
+    const { body } = ctx.request;
+
+    const user = findUserByName({ username: body.username });
+    if (user) {
+      ctx.throw(409, "USER_ALREADY_EXIST");
+      return;
+    }
+
     await createUser(ctx.request.body);
+
+    ctx.body = "SUCCESS";
   } else {
     ctx.throw(401);
   }

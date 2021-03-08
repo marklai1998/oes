@@ -1,59 +1,33 @@
-import { FormEventHandler, useState } from "react";
+import { message } from "antd";
 import Router from "next/router";
-import Layout from "../components/layout";
-import Form from "../components/form";
+import { useEffect } from "react";
+import { LoginForm } from "../components/LoginForm";
+import { useAuth } from "../hooks/useAuth";
+import { useFetch } from "../hooks/useFetch";
+import { register } from "../services/userApi/register";
 
-const Signup = () => {
-  const [errorMsg, setErrorMsg] = useState("");
+const SignUp = () => {
+  const { isLoggedIn } = useAuth();
+  const { fetchData: handleRegister } = useFetch(register);
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    isLoggedIn && Router.push("/");
+  }, [isLoggedIn]);
 
-    if (errorMsg) setErrorMsg("");
+  const handleSubmit = async (values: {
+    username: string;
+    password: string;
+  }) => {
+    const { success, error } = await handleRegister(values);
 
-    const body = {
-      username: e.currentTarget.username.value,
-      password: e.currentTarget.password.value,
-    };
-
-    if (body.password !== e.currentTarget.rpassword.value) {
-      setErrorMsg(`The passwords don't match`);
-      return;
-    }
-
-    try {
-      const res = await fetch("/api/user/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      if (res.status === 200) {
-        Router.push("/login");
-      } else {
-        throw new Error(await res.text());
-      }
-    } catch (error) {
-      console.error("An unexpected error happened occurred:", error);
-      setErrorMsg(error.message);
+    if (success) {
+      Router.push("/login");
+    } else {
+      error === "USER_ALREADY_EXIST" && message.error("User already exist");
     }
   };
 
-  return (
-    <Layout>
-      <div className="login">
-        <Form isLogin={false} errorMessage={errorMsg} onSubmit={handleSubmit} />
-      </div>
-      <style jsx>{`
-        .login {
-          max-width: 21rem;
-          margin: 0 auto;
-          padding: 1rem;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-        }
-      `}</style>
-    </Layout>
-  );
+  return <LoginForm isLogin={false} onSubmit={handleSubmit} />;
 };
 
-export default Signup;
+export default SignUp;

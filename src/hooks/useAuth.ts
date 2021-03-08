@@ -1,29 +1,38 @@
-import { refreshToken } from "./../services/userApi/refreshToken";
 import { useFetch } from "./useFetch";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { getUser } from "../services/userApi/getUser";
-import { PureUser } from "../../server/models/user";
 import { dayjs } from "../../server/utils/dayjs";
 import { login } from "../services/userApi/login";
 import constate from "constate";
 import { userState } from "../recoil/user";
 import { useRecoilState } from "recoil";
+import { useLocalStorage } from "react-use";
+import * as R from "ramda";
 
 export const [UserAuthProvider, useAuth] = constate(() => {
   const { fetchData: fetchUser } = useFetch(getUser);
   const { fetchData: performLogin } = useFetch(login);
+  const [idToken, setIdToken, removeIdToken] = useLocalStorage<string>(
+    "id_token",
+    undefined,
+    { raw: true }
+  );
+  const [
+    tokenExpireAt,
+    setTokenExpireAt,
+    removeTokenExpireAt,
+  ] = useLocalStorage<string>("expires_at", undefined, { raw: true });
 
   const [user, setUser] = useRecoilState(userState);
 
   const handleLogout = () => {
-    localStorage.removeItem("id_token");
-    localStorage.removeItem("expires_at");
+    removeIdToken();
+    removeTokenExpireAt();
     setUser(null);
   };
 
   const updateToken = () => {
-    const expireDate = localStorage.getItem("expires_at");
-    if (expireDate && dayjs().isAfter(expireDate)) {
+    if (tokenExpireAt && dayjs().isAfter(tokenExpireAt)) {
       handleLogout();
     }
   };
@@ -35,9 +44,8 @@ export const [UserAuthProvider, useAuth] = constate(() => {
 
   useEffect(() => {
     updateToken();
-    const token = localStorage.getItem("id_token");
-    token && refreshUser();
-  }, []);
+    idToken && refreshUser();
+  }, [idToken]);
 
   const handleLogin = async ({
     username,
@@ -52,8 +60,8 @@ export const [UserAuthProvider, useAuth] = constate(() => {
     });
 
     if (success) {
-      localStorage.setItem("id_token", result.token);
-      localStorage.setItem("expires_at", result.expires);
+      setIdToken(result.token);
+      setTokenExpireAt(result.expires);
       await refreshUser();
     }
   };
@@ -62,5 +70,6 @@ export const [UserAuthProvider, useAuth] = constate(() => {
     user,
     logout: handleLogout,
     login: handleLogin,
+    isLoggedIn: !R.isNil(idToken),
   };
 });

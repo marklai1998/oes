@@ -7,7 +7,7 @@ export const apiClient = axios.create({
 
 apiClient.interceptors.request.use(async (config) => {
   try {
-    const token = window.localStorage.getItem("id_token");
+    const token = localStorage.getItem("id_token");
 
     return token
       ? R.assocPath(["headers", "Authorization"], `Bearer ${token}`, config)

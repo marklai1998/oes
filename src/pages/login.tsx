@@ -1,34 +1,21 @@
-import { FormEventHandler } from "react";
+import { useEffect } from "react";
+import { LoginForm } from "../components/LoginForm";
 import { useAuth } from "../hooks/useAuth";
-import Layout from "../components/layout";
-import Form from "../components/form";
+import Router from "next/router";
 
 const Login = () => {
-  const { login } = useAuth();
+  const { login, isLoggedIn } = useAuth();
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault();
-    login({
-      username: e.currentTarget.username.value,
-      password: e.currentTarget.password.value,
-    });
-  };
+  useEffect(() => {
+    isLoggedIn && Router.push("/");
+  }, [isLoggedIn]);
 
   return (
-    <Layout>
+    <>
       <div className="login">
-        <Form isLogin onSubmit={handleSubmit} />
+        <LoginForm isLogin onSubmit={login} />
       </div>
-      <style jsx>{`
-        .login {
-          max-width: 21rem;
-          margin: 0 auto;
-          padding: 1rem;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-        }
-      `}</style>
-    </Layout>
+    </>
   );
 };
 

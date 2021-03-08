@@ -73,11 +73,14 @@ export const useFetch = <T extends any>(
 
       return { success: true, result: transformedResult || fallbackValue };
     } catch (e) {
-      console.log(e);
       setIsFetching(false);
 
       setFetchResult(fallbackValue);
-      return { success: false, result: fallbackValue };
+      return {
+        success: false,
+        result: fallbackValue,
+        error: e.response.data || "",
+      };
     }
   };
 
