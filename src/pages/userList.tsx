@@ -60,7 +60,6 @@ const UserList = () => {
         <Content>
           {data && (
             <Table
-              title={() => `${data.total} results`}
               size="small"
               rowKey="_id"
               columns={columns}

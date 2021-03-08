@@ -8,9 +8,9 @@ export const Box = styled.div<{ padding?: boolean }>`
 
 export const Title = styled.h1`
   line-height: 1em;
-  padding: 24px;
-  font-size: 1.5em;
-  padding-bottom: 0;
+  padding: 16px 24px;
+  font-size: 1.3em;
+  margin-bottom: 0;
 `;
 
 export const Content = styled.div``;
