@@ -99,7 +99,7 @@ const ColorBackground = styled.div`
 const Header = styled.div`
   width: 100%;
   display: flex;
-  padding: 8px 32px;
+  padding: 16px 32px;
   display: flex;
   color: #fff;
   line-height: 40px;
