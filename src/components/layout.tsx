@@ -8,10 +8,6 @@ type Props = {
 
 const Layout = (props: Props) => (
   <>
-    <Head>
-      <title>Onscreen Exam System</title>
-    </Head>
-
     <Header />
 
     <main>
