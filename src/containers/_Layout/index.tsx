@@ -3,17 +3,22 @@ import Link from "next/link";
 import React from "react";
 import styled from "styled-components";
 import { useAuth } from "../../hooks/useAuth";
-import { LogoutOutlined, ProfileOutlined } from "@ant-design/icons";
+import {
+  LogoutOutlined,
+  ProfileOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import randomColor from "randomcolor";
 import Router from "next/router";
 import { PageLoading } from "../../components/PageLoading";
+import { userTierType } from "../../../server/constants/userTierType";
 
 type Props = {
   children: React.ReactNode;
 };
 
 export const Layout = ({ children }: Props) => {
-  const { user, logout, isAuthing } = useAuth();
+  const { user, logout, isAuthing, tier } = useAuth();
 
   return isAuthing ? (
     <PageLoading />
@@ -43,6 +48,16 @@ export const Layout = ({ children }: Props) => {
                   >
                     Profile
                   </Menu.Item>
+                  {tier === userTierType.ADMIN && (
+                    <Menu.Item
+                      icon={<UserOutlined />}
+                      onClick={() => {
+                        Router.push("/userList");
+                      }}
+                    >
+                      User Management
+                    </Menu.Item>
+                  )}
                 </Menu>
               }
             >
@@ -50,6 +65,7 @@ export const Layout = ({ children }: Props) => {
                 style={{
                   backgroundColor: randomColor({ seed: user.username }),
                   verticalAlign: "middle",
+                  cursor: "pointer",
                 }}
               >
                 {user.username}
