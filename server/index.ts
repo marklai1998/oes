@@ -8,6 +8,8 @@ import apiRouter from "./controllers";
 import bodyParser from "koa-bodyparser";
 import mongoose from "mongoose";
 import * as URI from "uri-js";
+import IO from "koa-socket-2";
+import { dayjs } from "./utils/dayjs";
 
 const port = process.env.PORT || 3000;
 const dev = process.env.NODE_ENV !== "production";
@@ -49,6 +51,18 @@ const App = async () => {
     );
 
     const koa = new Koa().use(bodyParser({})).use(passport.initialize());
+
+    const io = new IO();
+
+    io.attach(koa);
+
+    io.on("connection", (sock) => {
+      console.log("connected!");
+    });
+
+    setInterval(() => {
+      io.broadcast("time", dayjs().toISOString());
+    }, 1000);
 
     const router = new Router().use(
       "/api",
