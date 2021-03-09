@@ -6,7 +6,6 @@ import { useAuth } from "../../hooks/useAuth";
 import {
   LogoutOutlined,
   ProfileOutlined,
-  UserOutlined,
   BarsOutlined,
 } from "@ant-design/icons";
 import randomColor from "randomcolor";
@@ -23,7 +22,7 @@ type Props = {
 };
 
 export const Layout = ({ children }: Props) => {
-  const { user, logout, isAuthing, isAdmin, isTeacher, isLoggedIn } = useAuth();
+  const { user, logout, isAuthing, isTeacher, isAdmin, isLoggedIn } = useAuth();
   const { socket } = useSocket();
   const layout = useLayout();
   const [drawerVisible, setDrawerVisible] = useState(false);
@@ -80,16 +79,6 @@ export const Layout = ({ children }: Props) => {
                     >
                       Profile
                     </Menu.Item>
-                    {isAdmin && (
-                      <Menu.Item
-                        icon={<UserOutlined />}
-                        onClick={() => {
-                          Router.push("/userList");
-                        }}
-                      >
-                        User Management
-                      </Menu.Item>
-                    )}
                   </Menu>
                 }
               >

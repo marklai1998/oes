@@ -2,7 +2,7 @@ import Link from "next/link";
 import React from "react";
 import styled from "styled-components";
 import { Box } from "../../components/Box";
-import { HomeOutlined } from "@ant-design/icons";
+import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import { Drawer, Tooltip } from "antd";
 import { layoutType } from "../../constants/layoutType";
 import { useAuth } from "../../hooks/useAuth";
@@ -14,7 +14,7 @@ type Props = {
 };
 
 export const Nav = ({ drawerVisible, onDrawerClose }: Props) => {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, isAdmin } = useAuth();
   const layout = useLayout();
 
   const Content = (
@@ -27,6 +27,16 @@ export const Nav = ({ drawerVisible, onDrawerClose }: Props) => {
           </StyledLink>
         </Tooltip>
       </Link>
+
+      {isAdmin && (
+        <Link href="/userList">
+          <Tooltip placement="right" title="User Management">
+            <StyledLink>
+              <UserOutlined />
+            </StyledLink>
+          </Tooltip>
+        </Link>
+      )}
     </Wrapper>
   );
 
@@ -68,5 +78,6 @@ const Logo = styled.img`
 
 const StyledLink = styled.a`
   font-size: 20px;
-  padding: 18px;
+  padding: 8px 18px;
+  display: block;
 `;
