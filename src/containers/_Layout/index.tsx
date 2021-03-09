@@ -12,13 +12,14 @@ import randomColor from "randomcolor";
 import Router from "next/router";
 import { PageLoading } from "../../components/PageLoading";
 import { useSocket } from "../../hooks/useSocket";
+import { CreateExamButton } from "./CreateExamButton";
 
 type Props = {
   children: React.ReactNode;
 };
 
 export const Layout = ({ children }: Props) => {
-  const { user, logout, isAuthing, isAdmin } = useAuth();
+  const { user, logout, isAuthing, isAdmin, isTeacher } = useAuth();
   const { socket } = useSocket();
 
   return isAuthing || !socket ? (
@@ -34,6 +35,7 @@ export const Layout = ({ children }: Props) => {
         </Link>
         <NavWrapper></NavWrapper>
         <UserWrapper>
+          {(isAdmin || isTeacher) && <CreateExamButton />}
           {user ? (
             <Dropdown
               overlay={
