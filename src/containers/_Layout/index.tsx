@@ -1,90 +1,139 @@
-import { Avatar, Dropdown, Menu } from "antd";
+import { Avatar, Button, Dropdown, Menu } from "antd";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useAuth } from "../../hooks/useAuth";
 import {
   LogoutOutlined,
   ProfileOutlined,
   UserOutlined,
+  BarsOutlined,
 } from "@ant-design/icons";
 import randomColor from "randomcolor";
 import Router from "next/router";
 import { PageLoading } from "../../components/PageLoading";
 import { useSocket } from "../../hooks/useSocket";
 import { CreateExamButton } from "./CreateExamButton";
+import { Nav } from "./Nav";
+import { useLayout } from "../../hooks/useLayout";
+import { layoutType } from "../../constants/layoutType";
 
 type Props = {
   children: React.ReactNode;
 };
 
 export const Layout = ({ children }: Props) => {
-  const { user, logout, isAuthing, isAdmin, isTeacher } = useAuth();
+  const { user, logout, isAuthing, isAdmin, isTeacher, isLoggedIn } = useAuth();
   const { socket } = useSocket();
+  const layout = useLayout();
+  const [drawerVisible, setDrawerVisible] = useState(false);
+
+  useEffect(() => {
+    layout === layoutType.DESKTOP && setDrawerVisible(false);
+  }, [layout]);
 
   return isAuthing || !socket ? (
     <PageLoading />
   ) : (
-    <>
-      <ColorBackground />
-      <Header>
-        <Link href="/">
-          <LogoWrapper>
-            <Logo src="/static/logo.svg" /> OES
-          </LogoWrapper>
-        </Link>
-        <NavWrapper></NavWrapper>
-        <UserWrapper>
-          {(isAdmin || isTeacher) && <CreateExamButton />}
-          {user ? (
-            <Dropdown
-              overlay={
-                <Menu>
-                  <Menu.Item icon={<LogoutOutlined />} onClick={logout}>
-                    Logout
-                  </Menu.Item>
-                  <Menu.Item
-                    icon={<ProfileOutlined />}
-                    onClick={() => {
-                      Router.push("/profile");
-                    }}
-                  >
-                    Profile
-                  </Menu.Item>
-                  {isAdmin && (
+    <Wrapper>
+      <Nav
+        drawerVisible={drawerVisible}
+        onDrawerClose={() => {
+          setDrawerVisible(false);
+        }}
+      />
+      <ColWrapper>
+        <ColorBackground />
+        <Header>
+          {(!isLoggedIn || layout === layoutType.MOBILE) && (
+            <>
+              {isLoggedIn && (
+                <StyledButton
+                  icon={<BarsOutlined />}
+                  type="text"
+                  onClick={() => setDrawerVisible(true)}
+                  size="large"
+                />
+              )}
+              <Link href="/">
+                <LogoWrapper>
+                  <Logo src="/static/logo.svg" /> OES
+                </LogoWrapper>
+              </Link>
+            </>
+          )}
+          <NavWrapper></NavWrapper>
+          <UserWrapper>
+            {(isAdmin || isTeacher) && <CreateExamButton />}
+            {user ? (
+              <Dropdown
+                overlay={
+                  <Menu>
+                    <Menu.Item icon={<LogoutOutlined />} onClick={logout}>
+                      Logout
+                    </Menu.Item>
                     <Menu.Item
-                      icon={<UserOutlined />}
+                      icon={<ProfileOutlined />}
                       onClick={() => {
-                        Router.push("/userList");
+                        Router.push("/profile");
                       }}
                     >
-                      User Management
+                      Profile
                     </Menu.Item>
-                  )}
-                </Menu>
-              }
-            >
-              <Avatar
-                style={{
-                  backgroundColor: randomColor({ seed: user.username }),
-                  verticalAlign: "middle",
-                  cursor: "pointer",
-                }}
+                    {isAdmin && (
+                      <Menu.Item
+                        icon={<UserOutlined />}
+                        onClick={() => {
+                          Router.push("/userList");
+                        }}
+                      >
+                        User Management
+                      </Menu.Item>
+                    )}
+                  </Menu>
+                }
               >
-                {user.username}
-              </Avatar>
-            </Dropdown>
-          ) : (
-            <Link href="/login">
-              <StyledLink>Login</StyledLink>
-            </Link>
-          )}
-        </UserWrapper>
-      </Header>
-      {children}
-    </>
+                <Avatar
+                  style={{
+                    backgroundColor: randomColor({ seed: user.username }),
+                    verticalAlign: "middle",
+                    cursor: "pointer",
+                  }}
+                >
+                  {user.username}
+                </Avatar>
+              </Dropdown>
+            ) : (
+              <Link href="/login">
+                <StyledLink>Login</StyledLink>
+              </Link>
+            )}
+          </UserWrapper>
+        </Header>
+        <ContentWrapper>{children}</ContentWrapper>
+      </ColWrapper>
+    </Wrapper>
   );
 };
+
+const Wrapper = styled.div`
+  width: 100%;
+  display: flex;
+  height: 100%;
+  max-height: 100%;
+`;
+
+const ColWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  position: relative;
+`;
+
+const ContentWrapper = styled.div`
+  overflow: auto;
+`;
 
 const ColorBackground = styled.div`
   width: 100%;
@@ -102,7 +151,7 @@ const ColorBackground = styled.div`
 const Header = styled.div`
   width: 100%;
   display: flex;
-  padding: 16px 32px;
+  padding: 16px 24px;
   display: flex;
   color: #fff;
   line-height: 40px;
@@ -127,5 +176,10 @@ const UserWrapper = styled.div`
 `;
 
 const StyledLink = styled.a`
+  color: #fff;
+`;
+
+const StyledButton = styled(Button)`
+  margin-right: 16px;
   color: #fff;
 `;

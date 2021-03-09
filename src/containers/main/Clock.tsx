@@ -6,7 +6,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { useSocket } from "../../hooks/useSocket";
 
 export const Clock = () => {
-  const { user } = useAuth();
+  const { user, isLoggedIn } = useAuth();
   const [time, setTime] = useState(dayjs().toISOString());
   const { socket } = useSocket();
 
@@ -20,7 +20,7 @@ export const Clock = () => {
 
   return (
     <Wrapper>
-      <Title>Welcome Back {user.username}</Title>
+      <Title>Welcome Back {isLoggedIn ? user.username : ""}</Title>
       <TimeWrapper>
         <Time>{dayjsTime.format("hh:mm:ss")}</Time>
         {dayjsTime.format("A")}
