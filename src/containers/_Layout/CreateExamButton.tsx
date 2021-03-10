@@ -8,6 +8,7 @@ import styled from "styled-components";
 import { Moment } from "moment";
 import { useFetch } from "../../hooks/useFetch";
 import { createExam } from "../../services/examApi/createExam";
+import { dayjs } from "../../../server/utils/dayjs";
 
 export const CreateExamButton = () => {
   const [modelVisible, setModalVisible] = useState(false);
@@ -70,7 +71,12 @@ export const CreateExamButton = () => {
             name="time"
             rules={[{ required: true, message: "Please input time!" }]}
           >
-            <DatePicker.RangePicker showTime />
+            <DatePicker.RangePicker
+              showTime
+              disabledDate={(date) =>
+                date.isBefore(dayjs().toISOString(), "day")
+              }
+            />
           </Form.Item>
         </Form>
       </Modal>

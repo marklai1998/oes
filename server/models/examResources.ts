@@ -1,7 +1,7 @@
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document, ObjectId } from "mongoose";
 
 export type PureExamResources = {
-  _id: string;
+  _id: ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
 };

@@ -8,6 +8,7 @@ import { createGlobalStyle } from "styled-components";
 import Head from "next/head";
 import { UserSocketProvider } from "../hooks/useSocket";
 import { UseLayoutProvider } from "../hooks/useLayout";
+import { UseTimeProvider } from "../hooks/useTime";
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -20,11 +21,13 @@ function MyApp({ Component, pageProps }) {
       <RecoilRoot>
         <UserAuthProvider>
           <UserSocketProvider>
-            <UseLayoutProvider>
-              <Layout>
-                <Component {...pageProps} />
-              </Layout>
-            </UseLayoutProvider>
+            <UseTimeProvider>
+              <UseLayoutProvider>
+                <Layout>
+                  <Component {...pageProps} />
+                </Layout>
+              </UseLayoutProvider>
+            </UseTimeProvider>
           </UserSocketProvider>
         </UserAuthProvider>
       </RecoilRoot>

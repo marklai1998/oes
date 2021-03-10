@@ -1,9 +1,9 @@
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document, ObjectId } from "mongoose";
 import { userTierType } from "../constants/userTierType";
 import * as R from "ramda";
 
 export type PureUser = {
-  _id: string;
+  _id: ObjectId;
   tier: userTierType;
   createdAt?: Date;
   updatedAt?: Date;

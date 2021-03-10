@@ -1,17 +1,17 @@
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document, ObjectId } from "mongoose";
 import { PureExamResources } from "./examResources";
 import { PureUser } from "./user";
 
 export type PureExam = {
-  _id: string;
+  _id: ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
   name: string;
-  createdBy: string;
+  createdBy: string | ObjectId;
   from: Date;
   to: Date;
-  invigilator: string[];
-  attendee: string[];
+  invigilator: ObjectId[];
+  attendee: ObjectId[];
   resources: string[];
 };
 
