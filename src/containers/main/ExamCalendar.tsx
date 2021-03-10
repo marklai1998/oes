@@ -25,9 +25,11 @@ export const ExamCalendar = () => {
         headerRender={() => null}
         disabledDate={(date) => date.isBefore(dayjs().toISOString(), "day")}
         value={moment(date)}
-        dateCellRender={(date) => {
-          const items = (data ? data.list : []).filter(({ from, to }) =>
-            date.isBetween(from, to)
+        dateCellRender={(d) => {
+          const items = (data ? data.list : []).filter(
+            ({ from, to }) =>
+              d.isSameOrAfter(dayjs(from).startOf("day").toISOString()) &&
+              d.isSameOrBefore(dayjs(to).endOf("day").toISOString())
           );
           return (
             <ExamList>

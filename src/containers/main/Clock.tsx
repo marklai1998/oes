@@ -22,8 +22,6 @@ export const Clock = () => {
     fetchData();
   }, [date]);
 
-  console.log(data);
-
   return (
     <Box>
       <Title>Welcome Back {isLoggedIn ? user.username : ""}</Title>
