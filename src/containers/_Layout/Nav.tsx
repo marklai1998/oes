@@ -71,19 +71,19 @@ export const Nav = ({ drawerVisible, onDrawerClose }: Props) => {
 const Wrapper = styled(Box)`
   flex-shrink: 0;
   height: 100%;
-  width: 56px;
-  padding: 8px 0;
+  width: 48px;
   overflow: auto;
 `;
 
 const Logo = styled.img`
-  width: 56px;
-  padding: 8px;
+  width: 48px;
+  padding: 0 5px;
+  margin-top: 8px;
   margin-bottom: 32px;
 `;
 
 const StyledLink = styled.a`
-  font-size: 20px;
-  padding: 8px 18px;
+  font-size: 16px;
+  padding: 8px 14px;
   display: block;
 `;
