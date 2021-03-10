@@ -83,6 +83,6 @@ export const listExam = async ({
 
   return {
     count: await exam.countDocuments(finalQuery),
-    list: await exam.find(finalQuery),
+    list: await exam.find(finalQuery).sort({ from: 1 }),
   };
 };
