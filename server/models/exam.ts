@@ -4,6 +4,7 @@ import { PureUser } from "./user";
 
 export type PureExam = {
   _id: ObjectId;
+  visible: boolean;
   createdAt?: Date;
   updatedAt?: Date;
   name: string;
@@ -17,6 +18,7 @@ export type PureExam = {
 
 export type PopulatedExam = {
   _id: string;
+  visible: boolean;
   createdAt?: Date;
   updatedAt?: Date;
   name: string;
@@ -32,6 +34,7 @@ export type Exam = Document & PureExam;
 
 const examSchema = new mongoose.Schema(
   {
+    visible: { type: Boolean, require: true },
     name: { type: String, require: true },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
     from: { type: Date, require: true },

@@ -3,15 +3,14 @@ import { ContentWrapper } from "../../../components/ContentWrapper";
 import { useRouter } from "next/router";
 import { useFetch } from "../../../hooks/useFetch";
 import { getExamDetail } from "../../../services/examApi/getExam";
-import { Header } from "../../../containers/editExam/Header";
+import { ExamEditor } from "../../../containers/editExam";
+import { updateExam } from "../../../../server/repositories/exam";
 
 const EditExam = () => {
   const {
     query: { id },
   } = useRouter();
   const { fetchData, data } = useFetch(getExamDetail);
-
-  console.log(id, data);
 
   useEffect(() => {
     id && fetchData(id);
@@ -21,7 +20,7 @@ const EditExam = () => {
     <></>
   ) : (
     <ContentWrapper>
-      <Header data={data} />
+      <ExamEditor initialValue={data} />
     </ContentWrapper>
   );
 };

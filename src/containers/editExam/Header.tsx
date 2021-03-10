@@ -1,4 +1,4 @@
-import { Button, message } from "antd";
+import { Button, message, Switch } from "antd";
 import React, { useMemo } from "react";
 import styled from "styled-components";
 import { PopulatedExam } from "../../../server/models/exam";
@@ -13,16 +13,17 @@ import { deleteExam } from "../../services/examApi/deleteExam";
 
 type Props = {
   data: PopulatedExam;
+  onVisibleChange: (value: boolean) => void;
 };
 
-export const Header = ({ data }: Props) => {
+export const Header = ({ data, onVisibleChange }: Props) => {
   const now = useTime();
-  const { fetchData } = useFetch(deleteExam);
+  const { fetchData: handleDeleteExam } = useFetch(deleteExam);
 
   const status = useMemo(() => getExamStatus(now, data), [data, now]);
 
   const handleDelete = async () => {
-    const { success } = await fetchData(data._id);
+    const { success } = await handleDeleteExam(data._id);
     if (success) {
       message.success("Exam deleted");
       Router.push("/myExam");
@@ -36,6 +37,12 @@ export const Header = ({ data }: Props) => {
         <ExamStatusBadge status={status} />
       </MetaWrapper>
       <ButtonGroup>
+        <Switch
+          checkedChildren="Visible"
+          unCheckedChildren="Invisible"
+          checked={data.visible}
+          onChange={onVisibleChange}
+        />
         <Button type="link" size="large" danger onClick={handleDelete}>
           <DeleteOutlined />
         </Button>
@@ -60,6 +67,5 @@ const MetaWrapper = styled.div`
 const ButtonGroup = styled.div`
   flex-shrink: 0;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  align-items: center;
 `;

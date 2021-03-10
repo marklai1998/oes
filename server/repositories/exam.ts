@@ -1,3 +1,4 @@
+import { PureExam } from "./../models/exam";
 import { PureUser } from "./../models/user";
 import exam, { Exam } from "../models/exam";
 import { dayjs } from "../utils/dayjs";
@@ -17,6 +18,7 @@ export const createExam = async ({
   to: string;
 }) =>
   exam.create({
+    visible: false,
     name,
     createdBy: mongoose.Types.ObjectId(createdBy),
     from: dayjs(from).toDate(),
@@ -90,6 +92,7 @@ export const listExam = async ({
   const studentQuery: mongoose.FilterQuery<Exam> = {
     ...timeQuery,
     attendee: mongoose.Types.ObjectId(userId),
+    visible: true,
   };
 
   const teacherQuery: mongoose.FilterQuery<Exam> = {
@@ -118,3 +121,9 @@ export const listExam = async ({
     list: await exam.find(finalQuery).sort({ from: 1 }),
   };
 };
+
+export const updateExam = async (id: string, newValues: Partial<PureExam>) =>
+  exam.findByIdAndUpdate(
+    id,
+    R.omit(["_id", "createdBy", "createAt", "updateAt"], newValues)
+  );

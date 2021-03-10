@@ -4,6 +4,7 @@ import {
   deleteExam,
   getDetailedExam,
   listExam,
+  updateExam,
 } from "./../../repositories/exam";
 import Router from "@koa/router";
 import { Context, DefaultState } from "koa";
@@ -82,6 +83,27 @@ router.delete(
     }
 
     await deleteExam(ctx.params.id);
+
+    ctx.body = "SUCCESS";
+  }
+);
+
+router.patch(
+  "/:id",
+  checkAuth({ tiers: [userTierType.ADMIN, userTierType.TEACHER] }),
+  async (ctx) => {
+    const user = ctx.state.user;
+
+    if (!(await canEditExam(ctx.params.id, user))) {
+      ctx.throw(401, "EXAM_NOT_FOUND");
+      return;
+    }
+
+    const {
+      request: { body },
+    } = ctx;
+
+    await updateExam(ctx.params.id, body);
 
     ctx.body = "SUCCESS";
   }
