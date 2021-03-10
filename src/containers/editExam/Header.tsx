@@ -1,26 +1,24 @@
 import { Button, message, Switch } from "antd";
-import React, { useMemo } from "react";
+import React from "react";
 import styled from "styled-components";
 import { PopulatedExam } from "../../../server/models/exam";
-import { getExamStatus } from "../../../server/utils/getExamStatus";
 import { Box, Title } from "../../components/Box";
 import { ExamStatusBadge } from "../../components/ExamStatusBadge";
-import { useTime } from "../../hooks/useTime";
 import { DeleteOutlined } from "@ant-design/icons";
 import { useFetch } from "../../hooks/useFetch";
 import Router from "next/router";
 import { deleteExam } from "../../services/examApi/deleteExam";
+import { examStatusType } from "../../../server/constants/examStatusType";
 
 type Props = {
   data: PopulatedExam;
   onVisibleChange: (value: boolean) => void;
+  status: examStatusType;
+  locked: boolean;
 };
 
-export const Header = ({ data, onVisibleChange }: Props) => {
-  const now = useTime();
+export const Header = ({ status, data, onVisibleChange, locked }: Props) => {
   const { fetchData: handleDeleteExam } = useFetch(deleteExam);
-
-  const status = useMemo(() => getExamStatus(now, data), [data, now]);
 
   const handleDelete = async () => {
     const { success } = await handleDeleteExam(data._id);
@@ -42,8 +40,15 @@ export const Header = ({ data, onVisibleChange }: Props) => {
           unCheckedChildren="Invisible"
           checked={data.visible}
           onChange={onVisibleChange}
+          disabled={locked}
         />
-        <Button type="link" size="large" danger onClick={handleDelete}>
+        <Button
+          type="link"
+          size="large"
+          danger
+          onClick={handleDelete}
+          disabled={locked}
+        >
           <DeleteOutlined />
         </Button>
       </ButtonGroup>

@@ -1,10 +1,11 @@
 import {
-  canEditExam,
+  hasEditPermission,
   createExam,
   deleteExam,
   getDetailedExam,
   listExam,
   updateExam,
+  canEditExam,
 } from "./../../repositories/exam";
 import Router from "@koa/router";
 import { Context, DefaultState } from "koa";
@@ -62,7 +63,7 @@ router.get(
   async (ctx) => {
     const user = ctx.state.user;
 
-    if (!(await canEditExam(ctx.params.id, user))) {
+    if (!(await hasEditPermission(ctx.params.id, user))) {
       ctx.throw(401, "EXAM_NOT_FOUND");
       return;
     }
@@ -77,8 +78,13 @@ router.delete(
   async (ctx) => {
     const user = ctx.state.user;
 
-    if (!(await canEditExam(ctx.params.id, user))) {
+    if (!(await hasEditPermission(ctx.params.id, user))) {
       ctx.throw(401, "EXAM_NOT_FOUND");
+      return;
+    }
+
+    if (!(await canEditExam(ctx.params.id))) {
+      ctx.throw(401, "EXAM_LOCKED");
       return;
     }
 
@@ -94,8 +100,13 @@ router.patch(
   async (ctx) => {
     const user = ctx.state.user;
 
-    if (!(await canEditExam(ctx.params.id, user))) {
+    if (!(await hasEditPermission(ctx.params.id, user))) {
       ctx.throw(401, "EXAM_NOT_FOUND");
+      return;
+    }
+
+    if (!(await canEditExam(ctx.params.id))) {
+      ctx.throw(401, "EXAM_LOCKED");
       return;
     }
 

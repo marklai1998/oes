@@ -1,10 +1,12 @@
-import { PureExam } from "./../models/exam";
+import { getExamStatus } from "./../utils/getExamStatus";
+import { PopulatedExam, PureExam } from "./../models/exam";
 import { PureUser } from "./../models/user";
 import exam, { Exam } from "../models/exam";
 import { dayjs } from "../utils/dayjs";
 import mongoose from "mongoose";
 import { userTierType } from "../constants/userTierType";
 import * as R from "ramda";
+import { examStatusType } from "../constants/examStatusType";
 
 export const createExam = async ({
   name,
@@ -28,7 +30,7 @@ export const createExam = async ({
     resources: [],
   });
 
-export const canEditExam = async (id: string, user: PureUser) => {
+export const hasEditPermission = async (id: string, user: PureUser) => {
   if (user.tier === userTierType.ADMIN) return true;
 
   const result = await exam
@@ -48,7 +50,7 @@ export const canEditExam = async (id: string, user: PureUser) => {
   return !R.isNil(result);
 };
 
-export const getDetailedExam = async (id: string) =>
+export const getDetailedExam = async (id: string): Promise<PopulatedExam> =>
   await exam
     .findById(id)
     .populate("createdBy invigilator attendee", "name")
@@ -57,6 +59,15 @@ export const getDetailedExam = async (id: string) =>
 
 export const deleteExam = async (id: string) =>
   await exam.findByIdAndRemove(id);
+
+export const canEditExam = async (id: string) => {
+  const exam = await getDetailedExam(id);
+  if (!exam) return false;
+
+  const status = getExamStatus(dayjs().toISOString(), exam);
+
+  return status === examStatusType.UPCOMING;
+};
 
 export const listExam = async ({
   tier,
