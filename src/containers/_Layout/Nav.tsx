@@ -2,7 +2,7 @@ import Link from "next/link";
 import React from "react";
 import styled from "styled-components";
 import { Box } from "../../components/Box";
-import { HomeOutlined, UserOutlined } from "@ant-design/icons";
+import { HomeOutlined, UserOutlined, ReadOutlined } from "@ant-design/icons";
 import { Drawer, Tooltip } from "antd";
 import { layoutType } from "../../constants/layoutType";
 import { useAuth } from "../../hooks/useAuth";
@@ -27,7 +27,13 @@ export const Nav = ({ drawerVisible, onDrawerClose }: Props) => {
           </StyledLink>
         </Tooltip>
       </Link>
-
+      <Link href="/myExam">
+        <Tooltip placement="right" title="My Exam">
+          <StyledLink>
+            <ReadOutlined />
+          </StyledLink>
+        </Tooltip>
+      </Link>
       {isAdmin && (
         <Link href="/userList">
           <Tooltip placement="right" title="User Management">

@@ -35,24 +35,23 @@ export const listExam = async ({
   from?: string;
   to?: string;
 }) => {
-  const timeQuery: mongoose.FilterQuery<Exam> = {
-    $or: [
-      {
-        from: {
-          ...(from ? { $gte: dayjs(from).toDate() } : {}),
-          ...(to ? { $lte: dayjs(to).toDate() } : {}),
-        },
-      },
-      {
-        from: {
-          ...(from ? { $lte: dayjs(from).toDate() } : {}),
-        },
-        to: {
-          ...(to ? { $gte: dayjs(to).toDate() } : {}),
-        },
-      },
-    ],
-  };
+  const timeQuery: mongoose.FilterQuery<Exam> =
+    from || to
+      ? {
+          $or: [
+            {
+              from: {
+                ...(from ? { $gte: dayjs(from).toDate() } : {}),
+                ...(to ? { $lte: dayjs(to).toDate() } : {}),
+              },
+            },
+            {
+              ...(from ? { from: { $lte: dayjs(from).toDate() } } : {}),
+              ...(to ? { to: { $gte: dayjs(to).toDate() } } : {}),
+            },
+          ],
+        }
+      : {};
 
   const adminQuery: mongoose.FilterQuery<Exam> = { ...timeQuery };
 
