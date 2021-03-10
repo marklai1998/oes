@@ -1,3 +1,4 @@
+import Router from "next/router";
 import { useFetch } from "./useFetch";
 import { useEffect, useMemo } from "react";
 import { getUser } from "../services/userApi/getUser";
@@ -6,7 +7,7 @@ import { login } from "../services/userApi/login";
 import constate from "constate";
 import { userState } from "../recoil/user";
 import { useRecoilState } from "recoil";
-import { useLocalStorage } from "react-use";
+import { useLocalStorage, useLocation } from "react-use";
 import * as R from "ramda";
 import { userTierType } from "../../server/constants/userTierType";
 import { message } from "antd";
@@ -24,8 +25,10 @@ export const [UserAuthProvider, useAuth] = constate(() => {
     setTokenExpireAt,
     removeTokenExpireAt,
   ] = useLocalStorage<string>("expires_at", undefined, { raw: true });
+  const { pathname } = useLocation();
 
   const [user, setUser] = useRecoilState(userState);
+  const isLoggedIn = !R.isNil(idToken);
 
   const handleLogout = () => {
     removeIdToken();
@@ -81,13 +84,21 @@ export const [UserAuthProvider, useAuth] = constate(() => {
     };
   }, [user]);
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      R.includes(pathname, ["/login", "/register"]) && Router.push("/");
+    } else {
+      !R.includes(pathname, ["/login", "/register"]) && Router.push("/login");
+    }
+  }, [isLoggedIn, pathname]);
+
   return {
     user,
     tier: user && user.tier,
     logout: handleLogout,
     login: handleLogin,
-    isLoggedIn: !R.isNil(idToken),
-    isAuthing: !R.isNil(idToken) && !user,
+    isLoggedIn,
+    isAuthing: isLoggedIn ? !user : false,
     ...tiers,
   };
 });

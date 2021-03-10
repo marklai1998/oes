@@ -7,15 +7,7 @@ import { ExamCalendar } from "../containers/main/ExamCalendar";
 import { useAuth } from "../hooks/useAuth";
 
 const Home = () => {
-  const { isLoggedIn } = useAuth();
-
-  useEffect(() => {
-    !isLoggedIn && Router.push("/login");
-  }, [isLoggedIn]);
-
-  return !isLoggedIn ? (
-    <></>
-  ) : (
+  return (
     <ContentWrapper>
       <Clock />
       <Spacer />

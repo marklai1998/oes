@@ -29,8 +29,8 @@ const UserList = () => {
   );
 
   useEffect(() => {
-    (!isLoggedIn || !isAdmin) && Router.push("/");
-  }, [isLoggedIn, isAdmin]);
+    !isAdmin && Router.push("/");
+  }, [isAdmin]);
 
   const refreshCurrent = () => {
     fetchData({
