@@ -20,8 +20,8 @@ export const ListItem = ({ item }: Props) => {
         dayjs(item.from).isSameOrAfter(now),
       isOnGoing:
         dayjs(now).isSameOrAfter(item.from) &&
-        dayjs(item.to).isSameOrAfter(item.to),
-      isEnded: dayjs(now).isSameOrAfter(item.to),
+        dayjs(item.to).isSameOrAfter(now),
+      isEnded: dayjs(now).isSameOrAfter(dayjs(item.to).add(15, "minutes")),
       isFinishing:
         dayjs(item.to).add(15, "minutes").isSameOrAfter(now) &&
         dayjs(now).isSameOrAfter(dayjs(item.to)),
