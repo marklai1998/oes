@@ -4,11 +4,11 @@ import { useForm } from "antd/lib/form/Form";
 import Modal from "antd/lib/modal/Modal";
 import React, { useState } from "react";
 import styled from "styled-components";
-// import { CreateExamPayload } from "../../services/examApi/createExam";
 import { Moment } from "moment";
 import { useFetch } from "../../hooks/useFetch";
 import { createExam } from "../../services/examApi/createExam";
 import { dayjs } from "../../../server/utils/dayjs";
+import Router from "next/router";
 
 export const CreateExamButton = () => {
   const [modelVisible, setModalVisible] = useState(false);
@@ -34,7 +34,7 @@ export const CreateExamButton = () => {
     });
 
     if (success) {
-      console.log(result);
+      Router.push(`/exam/${result._id}/edit`);
       setModalVisible(false);
     }
   };

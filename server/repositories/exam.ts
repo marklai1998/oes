@@ -1,7 +1,9 @@
+import { PureUser } from "./../models/user";
 import exam, { Exam } from "../models/exam";
 import { dayjs } from "../utils/dayjs";
 import mongoose from "mongoose";
 import { userTierType } from "../constants/userTierType";
+import * as R from "ramda";
 
 export const createExam = async ({
   name,
@@ -23,6 +25,36 @@ export const createExam = async ({
     attendee: [],
     resources: [],
   });
+
+export const canEditExam = async (id: string, user: PureUser) => {
+  if (user.tier === userTierType.ADMIN) return true;
+
+  const result = await exam
+    .findOne({
+      $or: [
+        {
+          _id: id,
+          invigilator: mongoose.Types.ObjectId(String(user._id)),
+        },
+        {
+          createdBy: user._id,
+        },
+      ],
+    })
+    .lean();
+
+  return !R.isNil(result);
+};
+
+export const getDetailedExam = async (id: string) =>
+  await exam
+    .findById(id)
+    .populate("createdBy invigilator attendee", "name")
+    .populate("resources")
+    .lean();
+
+export const deleteExam = async (id: string) =>
+  await exam.findByIdAndRemove(id);
 
 export const listExam = async ({
   tier,

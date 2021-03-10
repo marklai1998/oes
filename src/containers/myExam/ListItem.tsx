@@ -1,12 +1,15 @@
 import React, { useMemo } from "react";
 import styled from "styled-components";
 import { PureExam } from "../../../server/models/exam";
-import { FieldTimeOutlined } from "@ant-design/icons";
+import { FieldTimeOutlined, EditOutlined } from "@ant-design/icons";
 import { dayjs } from "../../../server/utils/dayjs";
-import { Tag } from "antd";
+import { Button } from "antd";
 import { useTime } from "../../hooks/useTime";
 import { getExamStatus } from "../../../server/utils/getExamStatus";
-import { examStatusType } from "../../../server/constants/examStatusType";
+import { useAuth } from "../../hooks/useAuth";
+import * as R from "ramda";
+import Link from "next/link";
+import { ExamStatusBadge } from "../../components/ExamStatusBadge";
 
 type Props = {
   item: PureExam;
@@ -14,29 +17,36 @@ type Props = {
 
 export const ListItem = ({ item }: Props) => {
   const now = useTime();
+  const { isAdmin, user } = useAuth();
 
   const status = useMemo(() => getExamStatus(now, item), [now, item]);
+  const canEdit =
+    isAdmin ||
+    item.createdBy === user._id ||
+    R.any((_id) => _id === user._id, item.invigilator);
 
   return (
     <Wrapper>
-      <Name>
-        {item.name}
-        <TagGroup>
-          {status === examStatusType.CONVENING && (
-            <Tag color="green">Convening</Tag>
-          )}
-          {status === examStatusType.ONGOING && <Tag color="blue">Ongoing</Tag>}
-          {status === examStatusType.FINISHING && (
-            <Tag color="red">Finishing</Tag>
-          )}
-          {status === examStatusType.ENDED && <Tag color="grey">Ended</Tag>}
-        </TagGroup>
-      </Name>
-      <Time>
-        <FieldTimeOutlined />{" "}
-        {`${dayjs(item.from).format("YYYY-MM-DD hh:mm")} - 
+      <MetaWrapper>
+        <NameWrapper>
+          <Name>{item.name}</Name>
+          <ExamStatusBadge status={status} />
+        </NameWrapper>
+        <Time>
+          <FieldTimeOutlined />{" "}
+          {`${dayjs(item.from).format("YYYY-MM-DD hh:mm")} - 
        ${dayjs(item.to).format("YYYY-MM-DD hh:mm")}`}
-      </Time>
+        </Time>
+      </MetaWrapper>
+      <ControlWrapper>
+        {canEdit && (
+          <Link href={`/exam/${item._id}/edit`}>
+            <Button type="link" block>
+              <EditOutlined />
+            </Button>
+          </Link>
+        )}
+      </ControlWrapper>
     </Wrapper>
   );
 };
@@ -44,11 +54,16 @@ export const ListItem = ({ item }: Props) => {
 const Wrapper = styled.div`
   border-top: 1px solid #eee;
   padding: 8px 16px;
+  display: flex;
 `;
 
-const Name = styled.div`
+const NameWrapper = styled.div`
   color: #1890ff;
   font-size: 16px;
+`;
+
+const Name = styled.span`
+  margin-right: 8px;
 `;
 
 const Time = styled.div`
@@ -56,11 +71,10 @@ const Time = styled.div`
   color: #8a8a8a;
 `;
 
-const TagGroup = styled.span`
-  margin-left: 8px;
-  line-height: 26px;
+const MetaWrapper = styled.div`
+  width: 100%;
+`;
 
-  & span {
-    vertical-align: text-bottom;
-  }
+const ControlWrapper = styled.div`
+  flex-shrink: 0;
 `;

@@ -10,6 +10,7 @@ import mongoose from "mongoose";
 import * as URI from "uri-js";
 import IO from "koa-socket-2";
 import { dayjs } from "./utils/dayjs";
+import "./models/examResources";
 
 const port = process.env.PORT || 3000;
 const dev = process.env.NODE_ENV !== "production";

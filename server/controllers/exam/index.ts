@@ -1,4 +1,10 @@
-import { createExam, listExam } from "./../../repositories/exam";
+import {
+  canEditExam,
+  createExam,
+  deleteExam,
+  getDetailedExam,
+  listExam,
+} from "./../../repositories/exam";
 import Router from "@koa/router";
 import { Context, DefaultState } from "koa";
 import { userTierType } from "../../constants/userTierType";
@@ -48,5 +54,37 @@ router.get("/list", checkAuth({}), async (ctx) => {
     userId: user._id,
   });
 });
+
+router.get(
+  "/:id",
+  checkAuth({ tiers: [userTierType.ADMIN, userTierType.TEACHER] }),
+  async (ctx) => {
+    const user = ctx.state.user;
+
+    if (!(await canEditExam(ctx.params.id, user))) {
+      ctx.throw(401, "EXAM_NOT_FOUND");
+      return;
+    }
+
+    ctx.body = await getDetailedExam(ctx.params.id);
+  }
+);
+
+router.delete(
+  "/:id",
+  checkAuth({ tiers: [userTierType.ADMIN, userTierType.TEACHER] }),
+  async (ctx) => {
+    const user = ctx.state.user;
+
+    if (!(await canEditExam(ctx.params.id, user))) {
+      ctx.throw(401, "EXAM_NOT_FOUND");
+      return;
+    }
+
+    await deleteExam(ctx.params.id);
+
+    ctx.body = "SUCCESS";
+  }
+);
 
 export default router;
