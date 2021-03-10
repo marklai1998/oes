@@ -5,6 +5,8 @@ import { FieldTimeOutlined } from "@ant-design/icons";
 import { dayjs } from "../../../server/utils/dayjs";
 import { Tag } from "antd";
 import { useTime } from "../../hooks/useTime";
+import { getExamStatus } from "../../../server/utils/getExamStatus";
+import { examStatusType } from "../../../server/constants/examStatusType";
 
 type Props = {
   item: PureExam;
@@ -13,31 +15,21 @@ type Props = {
 export const ListItem = ({ item }: Props) => {
   const now = useTime();
 
-  const { isConvening, isOnGoing, isFinishing, isEnded } = useMemo(
-    () => ({
-      isConvening:
-        dayjs(now).isSameOrAfter(dayjs(item.from).subtract(15, "minutes")) &&
-        dayjs(item.from).isSameOrAfter(now),
-      isOnGoing:
-        dayjs(now).isSameOrAfter(item.from) &&
-        dayjs(item.to).isSameOrAfter(now),
-      isEnded: dayjs(now).isSameOrAfter(dayjs(item.to).add(15, "minutes")),
-      isFinishing:
-        dayjs(item.to).add(15, "minutes").isSameOrAfter(now) &&
-        dayjs(now).isSameOrAfter(dayjs(item.to)),
-    }),
-    [now, item]
-  );
+  const status = useMemo(() => getExamStatus(now, item), [now, item]);
 
   return (
     <Wrapper>
       <Name>
         {item.name}
         <TagGroup>
-          {isConvening && <Tag color="green">Convening</Tag>}
-          {isOnGoing && <Tag color="blue">Ongoing</Tag>}
-          {isFinishing && <Tag color="red">Finishing</Tag>}
-          {isEnded && <Tag color="grey">Ended</Tag>}
+          {status === examStatusType.CONVENING && (
+            <Tag color="green">Convening</Tag>
+          )}
+          {status === examStatusType.ONGOING && <Tag color="blue">Ongoing</Tag>}
+          {status === examStatusType.FINISHING && (
+            <Tag color="red">Finishing</Tag>
+          )}
+          {status === examStatusType.ENDED && <Tag color="grey">Ended</Tag>}
         </TagGroup>
       </Name>
       <Time>

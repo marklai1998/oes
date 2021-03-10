@@ -1,7 +1,8 @@
 import { Tag } from "antd";
 import React, { useEffect, useMemo } from "react";
 import styled from "styled-components";
-import { dayjs } from "../../../server/utils/dayjs";
+import { examStatusType } from "../../../server/constants/examStatusType";
+import { getExamStatus } from "../../../server/utils/getExamStatus";
 import { Box, Title } from "../../components/Box";
 import { useFetch } from "../../hooks/useFetch";
 import { useDate, useTime } from "../../hooks/useTime";
@@ -9,7 +10,7 @@ import { listAllExam } from "../../services/examApi/listAllExam";
 import { ListItem } from "./ListItem";
 
 const ExamList = () => {
-  const time = useTime();
+  const now = useTime();
   const date = useDate();
   const { fetchData, data } = useFetch(listAllExam, {
     fallBackValue: { count: 0, list: [] },
@@ -24,18 +25,17 @@ const ExamList = () => {
   const { upcomingCount, finishedCount } = useMemo(
     () =>
       list.reduce(
-        (acc, { from, to }) => {
-          const isUpcoming = dayjs().isBefore(
-            dayjs(from).subtract(15, "minutes")
-          );
-          const isFinished = dayjs().isAfter(dayjs(to).add(15, "minutes"));
+        (acc, item) => {
+          const status = getExamStatus(now, item);
           return {
-            upcomingCount: isUpcoming
-              ? acc.upcomingCount + 1
-              : acc.upcomingCount,
-            finishedCount: isFinished
-              ? acc.finishedCount + 1
-              : acc.finishedCount,
+            upcomingCount:
+              status === examStatusType.UPCOMING
+                ? acc.upcomingCount + 1
+                : acc.upcomingCount,
+            finishedCount:
+              status === examStatusType.ENDED
+                ? acc.finishedCount + 1
+                : acc.finishedCount,
           };
         },
         {
@@ -43,7 +43,7 @@ const ExamList = () => {
           finishedCount: 0,
         }
       ),
-    [list, time]
+    [list, now]
   );
 
   return (
@@ -52,7 +52,7 @@ const ExamList = () => {
         My Exam
         <TagGroup>
           <Tag color="#2db7f5">Upcoming: {upcomingCount}</Tag>
-          <Tag color="grey">Finished: {finishedCount}</Tag>
+          <Tag color="grey">Ended: {finishedCount}</Tag>
         </TagGroup>
       </Title>
       {list.map((item) => (
