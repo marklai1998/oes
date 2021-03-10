@@ -4,11 +4,12 @@ import styled from "styled-components";
 import { dayjs } from "../../../server/utils/dayjs";
 import { Box, Title } from "../../components/Box";
 import { useFetch } from "../../hooks/useFetch";
-import { useDate } from "../../hooks/useTime";
+import { useDate, useTime } from "../../hooks/useTime";
 import { listAllExam } from "../../services/examApi/listAllExam";
 import { ListItem } from "./ListItem";
 
 const ExamList = () => {
+  const time = useTime();
   const date = useDate();
   const { fetchData, data } = useFetch(listAllExam, {
     fallBackValue: { count: 0, list: [] },
@@ -24,8 +25,10 @@ const ExamList = () => {
     () =>
       list.reduce(
         (acc, { from, to }) => {
-          const isUpcoming = dayjs().isBefore(from);
-          const isFinished = dayjs().isAfter(to);
+          const isUpcoming = dayjs().isBefore(
+            dayjs(from).subtract(15, "minutes")
+          );
+          const isFinished = dayjs().isAfter(dayjs(to).add(15, "minutes"));
           return {
             upcomingCount: isUpcoming
               ? acc.upcomingCount + 1
@@ -40,7 +43,7 @@ const ExamList = () => {
           finishedCount: 0,
         }
       ),
-    [list]
+    [list, time]
   );
 
   return (

@@ -27,8 +27,6 @@ export const CreateExamButton = () => {
     name: string;
     time: [Moment, Moment];
   }) => {
-    console.log(values);
-
     const { result, success } = await fetchData({
       name: values.name,
       from: values.time[0].toDate(),
@@ -70,6 +68,7 @@ export const CreateExamButton = () => {
             label="Time"
             name="time"
             rules={[{ required: true, message: "Please input time!" }]}
+            help="Exam will be available to join 15min in advance and will end 15min later"
           >
             <DatePicker.RangePicker
               showTime
