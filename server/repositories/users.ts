@@ -45,24 +45,41 @@ export const validatePassword = ({
 };
 
 export const listUser = async ({
+  tier,
   pageSize,
   page,
 }: {
+  tier?: userTierType[];
   page: number;
   pageSize: number;
 }) => {
-  const result = await user
-    .find()
-    .sort({
-      createdAt: 1,
-    })
-    .skip((page - 1) * pageSize)
-    .limit(pageSize)
-    .lean();
+  const query =
+    tier && !R.isEmpty(tier)
+      ? {
+          $or: tier.map((tier) => ({ tier })),
+        }
+      : {};
+
+  const result =
+    pageSize === -1
+      ? await user
+          .find(query)
+          .sort({
+            createdAt: 1,
+          })
+          .lean()
+      : await user
+          .find(query)
+          .sort({
+            createdAt: 1,
+          })
+          .skip((page - 1) * pageSize)
+          .limit(pageSize)
+          .lean();
 
   return {
     list: result,
-    total: await user.countDocuments(),
+    total: await user.countDocuments(query),
   };
 };
 

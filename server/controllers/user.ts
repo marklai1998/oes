@@ -72,11 +72,12 @@ router.post("/register", async (ctx) => {
 router.get(
   "/list",
   checkAuth({
-    tiers: [userTierType.ADMIN],
+    tiers: [userTierType.ADMIN, userTierType.TEACHER],
   }),
   async (ctx) => {
     const { query } = ctx;
     ctx.body = await listUser({
+      tier: query.tier as userTierType[],
       page: Number(query.page),
       pageSize: Number(query.pagesize),
     });

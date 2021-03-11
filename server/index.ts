@@ -11,6 +11,7 @@ import * as URI from "uri-js";
 import IO from "koa-socket-2";
 import { dayjs } from "./utils/dayjs";
 import "./models/examResources";
+import koaQs from "koa-qs";
 
 const port = process.env.PORT || 3000;
 const dev = process.env.NODE_ENV !== "production";
@@ -52,6 +53,7 @@ const App = async () => {
     );
 
     const koa = new Koa().use(bodyParser({})).use(passport.initialize());
+    koaQs(koa);
 
     const io = new IO();
 

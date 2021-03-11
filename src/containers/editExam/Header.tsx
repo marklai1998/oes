@@ -1,7 +1,7 @@
 import { Button, message, Switch } from "antd";
 import React from "react";
 import styled from "styled-components";
-import { PopulatedExam } from "../../../server/models/exam";
+import { PureExam } from "../../../server/models/exam";
 import { Box, Title } from "../../components/Box";
 import { ExamStatusBadge } from "../../components/ExamStatusBadge";
 import { DeleteOutlined } from "@ant-design/icons";
@@ -11,7 +11,7 @@ import { deleteExam } from "../../services/examApi/deleteExam";
 import { examStatusType } from "../../../server/constants/examStatusType";
 
 type Props = {
-  data: PopulatedExam;
+  data: PureExam;
   onVisibleChange: (value: boolean) => void;
   status: examStatusType;
   locked: boolean;
@@ -61,6 +61,8 @@ const Wrapper = styled(Box)`
 
   & ${Title} {
     color: #1890ff;
+    font-size: 24px;
+    line-height: 56px;
   }
 `;
 

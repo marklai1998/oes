@@ -1,16 +1,18 @@
-import { Alert } from "antd";
+import { Alert, message } from "antd";
 import React, { useMemo } from "react";
-import { useDeepCompareEffect, useSetState } from "react-use";
+import { useDeepCompareEffect, useSetState, useUpdateEffect } from "react-use";
 import { examStatusType } from "../../../server/constants/examStatusType";
-import { PopulatedExam } from "../../../server/models/exam";
+import { PureExam } from "../../../server/models/exam";
 import { getExamStatus } from "../../../server/utils/getExamStatus";
 import { Spacer } from "../../components/Spacer";
 import { useFetch } from "../../hooks/useFetch";
 import { useTime } from "../../hooks/useTime";
 import { updateExam } from "../../services/examApi/updateExam";
+import { BasicInfo } from "./BasicInfo";
 import { Header } from "./Header";
+import { UserManagement } from "./UserManagement";
 
-type Props = { initialValue: PopulatedExam };
+type Props = { initialValue: PureExam };
 
 export const ExamEditor = ({ initialValue }: Props) => {
   const [exam, setExam] = useSetState(initialValue);
@@ -23,9 +25,21 @@ export const ExamEditor = ({ initialValue }: Props) => {
     setExam({ visible: value });
   };
 
+  const handleFormChange = (value: Partial<PureExam>) => {
+    setExam(value);
+  };
+
   useDeepCompareEffect(() => {
     handleUpdateExam(initialValue._id, exam);
   }, [exam]);
+
+  useUpdateEffect(() => {
+    message.success(
+      exam.visible
+        ? "Exam is now visible to student"
+        : "Exam is now invisible to student"
+    );
+  }, [exam.visible]);
 
   return (
     <>
@@ -44,6 +58,10 @@ export const ExamEditor = ({ initialValue }: Props) => {
           />
         </>
       )}
+      <Spacer />
+      <BasicInfo data={exam} onSave={handleFormChange} locked={locked} />
+      <Spacer />
+      <UserManagement data={exam} onSave={handleFormChange} locked={locked} />
     </>
   );
 };

@@ -76,24 +76,22 @@ const UserList = () => {
       <Spacer />
       <Box>
         <Title>User List</Title>
-        <Content>
-          {data && (
-            <Table
-              size="small"
-              rowKey="_id"
-              columns={columns}
-              pagination={{
-                current: page,
-                pageSize: pageSize,
-                total: data.total,
-                onChange: handlePageChange,
-              }}
-              dataSource={data.list}
-              loading={isFetching}
-              scroll={{ x: true }}
-            />
-          )}
-        </Content>
+        {data && (
+          <Table
+            size="small"
+            rowKey="_id"
+            columns={columns}
+            pagination={{
+              current: page,
+              pageSize: pageSize,
+              total: data.total,
+              onChange: handlePageChange,
+            }}
+            dataSource={data.list}
+            loading={isFetching}
+            scroll={{ x: true }}
+          />
+        )}
       </Box>
     </ContentWrapper>
   );

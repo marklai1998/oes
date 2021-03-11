@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { useFetch } from "../../../hooks/useFetch";
 import { getExamDetail } from "../../../services/examApi/getExam";
 import { ExamEditor } from "../../../containers/editExam";
-import { updateExam } from "../../../../server/repositories/exam";
 
 const EditExam = () => {
   const {

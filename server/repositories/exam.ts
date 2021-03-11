@@ -53,7 +53,7 @@ export const hasEditPermission = async (id: string, user: PureUser) => {
 export const getDetailedExam = async (id: string): Promise<PopulatedExam> =>
   await exam
     .findById(id)
-    .populate("createdBy invigilator attendee", "name")
+    .populate("createdBy", "name")
     .populate("resources")
     .lean();
 

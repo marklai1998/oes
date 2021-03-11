@@ -13,4 +13,6 @@ export const Title = styled.h1`
   margin-bottom: 0;
 `;
 
-export const Content = styled.div``;
+export const Content = styled.div`
+  padding: 0 16px 16px 16px;
+`;

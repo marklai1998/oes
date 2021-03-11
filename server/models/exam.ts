@@ -3,31 +3,31 @@ import { PureExamResources } from "./examResources";
 import { PureUser } from "./user";
 
 export type PureExam = {
-  _id: ObjectId;
+  _id: ObjectId | string;
   visible: boolean;
   createdAt?: Date;
   updatedAt?: Date;
   name: string;
   createdBy: string | ObjectId;
-  from: Date;
-  to: Date;
-  invigilator: ObjectId[];
-  attendee: ObjectId[];
+  from: Date | string;
+  to: Date | string;
+  invigilator: (ObjectId | string)[];
+  attendee: (ObjectId | string)[];
   resources: string[];
 };
 
 export type PopulatedExam = {
-  _id: string;
+  _id: ObjectId | string;
   visible: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
   name: string;
   createdBy: PureUser;
-  from: Date;
-  to: Date;
-  invigilator: PureUser[];
-  attendee: PureUser[];
-  resources: PureExamResources[];
+  from: Date | string;
+  to: Date | string;
+  invigilator: (ObjectId | string)[];
+  attendee: (ObjectId | string)[];
+  resources: (ObjectId | string)[];
 };
 
 export type Exam = Document & PureExam;
