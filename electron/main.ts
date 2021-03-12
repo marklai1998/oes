@@ -15,7 +15,7 @@ function createWindow() {
     },
   });
 
-  mainWindow.loadURL("http://localhost:3000");
+  mainWindow.loadURL(process.env.PUBLIC_PATH);
 
   mainWindow.on("closed", () => {
     mainWindow = null;
