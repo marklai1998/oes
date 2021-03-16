@@ -15,7 +15,7 @@ function createWindow() {
     },
   });
 
-  mainWindow.loadURL(process.env.PUBLIC_PATH);
+  mainWindow.loadURL(process.env.PUBLIC_PATH || "");
 
   mainWindow.on("closed", () => {
     mainWindow = null;

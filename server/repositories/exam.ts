@@ -1,5 +1,5 @@
 import { getExamStatus } from "./../utils/getExamStatus";
-import { PopulatedExam, PureExam } from "./../models/exam";
+import { PopulatedExam, DetailedExam, PureExam } from "./../models/exam";
 import { PureUser } from "./../models/user";
 import exam, { Exam } from "../models/exam";
 import { dayjs } from "../utils/dayjs";
@@ -50,10 +50,17 @@ export const hasEditPermission = async (id: string, user: PureUser) => {
   return !R.isNil(result);
 };
 
-export const getDetailedExam = async (id: string): Promise<PopulatedExam> =>
+export const getDetailedExam = async (id: string): Promise<DetailedExam> =>
   await exam
     .findById(id)
     .populate("createdBy", "name")
+    .populate("resources")
+    .lean();
+
+export const getPopulatedExam = async (id: string): Promise<PopulatedExam> =>
+  await exam
+    .findById(id)
+    .populate("createdBy attendee invigilator", "_id username")
     .populate("resources")
     .lean();
 

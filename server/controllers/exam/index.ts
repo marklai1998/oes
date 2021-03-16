@@ -6,6 +6,7 @@ import {
   listExam,
   updateExam,
   canEditExam,
+  getPopulatedExam,
 } from "./../../repositories/exam";
 import Router from "@koa/router";
 import { Context, DefaultState } from "koa";
@@ -57,20 +58,20 @@ router.get("/list", checkAuth({}), async (ctx) => {
   });
 });
 
-router.get(
-  "/:id",
-  checkAuth({ tiers: [userTierType.ADMIN, userTierType.TEACHER] }),
-  async (ctx) => {
-    const user = ctx.state.user;
+router.get("/:id", checkAuth({}), async (ctx) => {
+  const user = ctx.state.user;
 
-    if (!(await hasEditPermission(ctx.params.id, user))) {
-      ctx.throw(401, "EXAM_NOT_FOUND");
-      return;
-    }
-
-    ctx.body = await getDetailedExam(ctx.params.id);
+  if (!(await hasEditPermission(ctx.params.id, user))) {
+    ctx.throw(401, "EXAM_NOT_FOUND");
+    return;
   }
-);
+
+  ctx.body = await getDetailedExam(ctx.params.id);
+});
+
+router.get("/:id/populated", checkAuth({}), async (ctx) => {
+  ctx.body = await getPopulatedExam(ctx.params.id);
+});
 
 router.delete(
   "/:id",

@@ -1,10 +1,10 @@
 import { dayjs } from "./dayjs";
 import { examStatusType } from "../constants/examStatusType";
-import { PopulatedExam, PureExam } from "./../models/exam";
+import { PopulatedExam, DetailedExam, PureExam } from "./../models/exam";
 
 export const getExamStatus = (
   now: string,
-  { from, to }: PureExam | PopulatedExam
+  { from, to }: PureExam | PopulatedExam | DetailedExam
 ): examStatusType => {
   const conveningTime = dayjs(from).subtract(15, "minute");
   const endTime = dayjs(to).add(15, "minute");

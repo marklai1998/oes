@@ -81,6 +81,8 @@ export const [UserAuthProvider, useAuth] = constate(() => {
       isAdmin: tier === userTierType.ADMIN,
       isStudent: tier === userTierType.STUDENT,
       isTeacher: tier === userTierType.TEACHER,
+      isInvigilator:
+        tier === userTierType.TEACHER || tier === userTierType.ADMIN,
     };
   }, [user]);
 

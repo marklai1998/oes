@@ -1,7 +1,12 @@
 import React, { useMemo } from "react";
 import styled from "styled-components";
 import { PureExam } from "../../../server/models/exam";
-import { FieldTimeOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  FieldTimeOutlined,
+  EditOutlined,
+  LoginOutlined,
+  EyeOutlined,
+} from "@ant-design/icons";
 import { dayjs } from "../../../server/utils/dayjs";
 import { Button } from "antd";
 import { useTime } from "../../hooks/useTime";
@@ -10,6 +15,7 @@ import { useAuth } from "../../hooks/useAuth";
 import * as R from "ramda";
 import Link from "next/link";
 import { ExamStatusBadge } from "../../components/ExamStatusBadge";
+import { isElectron } from "../../constants/isElectron";
 
 type Props = {
   item: PureExam;
@@ -17,7 +23,7 @@ type Props = {
 
 export const ListItem = ({ item }: Props) => {
   const now = useTime();
-  const { isAdmin, user } = useAuth();
+  const { isAdmin, user, isStudent } = useAuth();
 
   const status = useMemo(() => getExamStatus(now, item), [now, item]);
   const canEdit =
@@ -39,9 +45,16 @@ export const ListItem = ({ item }: Props) => {
         </Time>
       </MetaWrapper>
       <ControlWrapper>
+        {(isStudent ? isElectron : true) && (
+          <Link href={`/exam/${item._id}/join`}>
+            <Button type="link">
+              {isStudent ? <LoginOutlined /> : <EyeOutlined />}
+            </Button>
+          </Link>
+        )}
         {canEdit && (
           <Link href={`/exam/${item._id}/edit`}>
-            <Button type="link" block>
+            <Button type="link">
               <EditOutlined />
             </Button>
           </Link>
@@ -77,4 +90,8 @@ const MetaWrapper = styled.div`
 
 const ControlWrapper = styled.div`
   flex-shrink: 0;
+
+  & button {
+    padding: 0 8px;
+  }
 `;

@@ -16,18 +16,32 @@ export type PureExam = {
   resources: string[];
 };
 
+export type DetailedExam = {
+  _id: ObjectId | string;
+  visible: boolean;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  name: string;
+  createdBy: Pick<PureUser, "username" | "_id">;
+  from: Date | string;
+  to: Date | string;
+  invigilator: (ObjectId | string)[];
+  attendee: (ObjectId | string)[];
+  resources: (ObjectId | string)[];
+};
+
 export type PopulatedExam = {
   _id: ObjectId | string;
   visible: boolean;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   name: string;
-  createdBy: PureUser;
+  createdBy: Pick<PureUser, "username" | "_id">;
   from: Date | string;
   to: Date | string;
-  invigilator: (ObjectId | string)[];
-  attendee: (ObjectId | string)[];
-  resources: (ObjectId | string)[];
+  invigilator: Pick<PureUser, "username" | "_id">[];
+  attendee: Pick<PureUser, "username" | "_id">[];
+  resources: PureExamResources[];
 };
 
 export type Exam = Document & PureExam;

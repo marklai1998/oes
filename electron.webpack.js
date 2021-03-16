@@ -1,5 +1,6 @@
 const path = require("path");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
+const Dotenv = require("dotenv-webpack");
 
 module.exports = {
   target: "electron-main",
@@ -27,6 +28,7 @@ module.exports = {
       },
     ],
   },
+  plugins: [new Dotenv()],
   resolve: {
     modules: ["node_modules", path.resolve(__dirname, "node_modules")],
     plugins: [
