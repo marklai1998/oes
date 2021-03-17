@@ -12,6 +12,7 @@ import * as URI from "uri-js";
 import "./models/examResources";
 import koaQs from "koa-qs";
 import { socket } from "./socket";
+import cors from "@koa/cors";
 
 const port = process.env.PORT || 3000;
 const dev = process.env.NODE_ENV !== "production";
@@ -52,7 +53,10 @@ const App = async () => {
       )
     );
 
-    const koa = new Koa().use(bodyParser({})).use(passport.initialize());
+    const koa = new Koa()
+      .use(cors())
+      .use(bodyParser({}))
+      .use(passport.initialize());
     koaQs(koa);
     socket(koa);
 
