@@ -2,7 +2,6 @@
   "name": "oes",
   "scripts": {
     "dev": "tsnd --no-notify --respawn --transpile-only --project tsconfig.server.json --ignore-watch .next server",
-    "dev:electron": "cross-env NODE_ENV=development webpack --config electron.webpack.js --mode development && electron ./dist-electron/main.js",
     "build": "rimraf ./.next && next build && rimraf ./dist && yarn ttsc -p tsconfig.server.json",
     "start": "cross-env NODE_ENV=production node ./dist"
   },
@@ -54,8 +53,6 @@
     "@types/styled-components": "^5.1.8",
     "@types/uuid": "^8.3.0",
     "dotenv-webpack": "^7.0.2",
-    "electron": "^12.0.1",
-    "electron-devtools-installer": "^3.1.1",
     "ts-loader": "^8.0.18",
     "tsconfig-paths-webpack-plugin": "^3.3.0",
     "typescript": "^4.2.3",
