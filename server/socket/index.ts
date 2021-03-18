@@ -4,7 +4,13 @@ import Koa from "koa";
 import IO from "koa-socket-2";
 
 export const socket = (koa: Koa) => {
-  const io = new IO();
+  const io = new IO({
+    ioOptions: {
+      cors: {
+        origin: "*",
+      },
+    },
+  });
 
   io.attach(koa);
 
