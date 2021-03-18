@@ -2,6 +2,7 @@ import { dayjs } from "./../utils/dayjs";
 import Koa from "koa";
 
 import IO from "koa-socket-2";
+import { socketEvent } from "../constants/socketEvent";
 
 export const socket = (koa: Koa) => {
   const io = new IO({
@@ -19,6 +20,6 @@ export const socket = (koa: Koa) => {
   });
 
   setInterval(() => {
-    io.broadcast("time", dayjs().toISOString());
+    io.broadcast(socketEvent.TIME, dayjs().toISOString());
   }, 1000);
 };
