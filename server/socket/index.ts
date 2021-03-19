@@ -83,6 +83,17 @@ export const socket = (koa: Koa) => {
   });
 
   io.on(
+    socketEvent.LEAVE_EXAM,
+    ({ socket }, { examId }: { examId: string }) => {
+      console.log(`[${socket.id}] leave room ${examId}`);
+      socket.leave(examId);
+      socket.to(examId).emit(socketEvent.REMOVE_PEER, {
+        peerId: socket.id,
+      });
+    }
+  );
+
+  io.on(
     socketEvent.RELAY_ICE_CANDIDATE,
     (
       { socket },
