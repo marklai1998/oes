@@ -63,7 +63,6 @@ export const socket = (koa: Koa) => {
     socket.to(examId).emit(socketEvent.ADD_PEER, {
       peerId: socket.id,
       user: socket.user,
-      shouldCreateOffer: false,
     });
 
     // notify the new comer to create offer to all existing user
@@ -75,7 +74,6 @@ export const socket = (koa: Koa) => {
       socket.emit(socketEvent.ADD_PEER, {
         peerId: socketId,
         user: socketObject.user,
-        shouldCreateOffer: true,
       });
     });
 
