@@ -4,7 +4,7 @@ import { PureExam } from "../../../server/models/exam";
 import {
   FieldTimeOutlined,
   EditOutlined,
-  EyeOutlined,
+  CameraOutlined,
 } from "@ant-design/icons";
 import { dayjs } from "../../../server/utils/dayjs";
 import { Button } from "antd";
@@ -21,13 +21,14 @@ type Props = {
 
 export const ListItem = ({ item }: Props) => {
   const now = useTime();
-  const { isAdmin, user, isInvigilator } = useAuth();
+  const { isAdmin, user, isStudent } = useAuth();
 
   const status = useMemo(() => getExamStatus(now, item), [now, item]);
-  const canEdit =
-    isAdmin ||
-    item.createdBy === user._id ||
-    R.any((_id) => _id === user._id, item.invigilator);
+  const canEdit = user
+    ? isAdmin ||
+      item.createdBy === user._id ||
+      R.any((_id) => _id === user._id, item.invigilator)
+    : false;
 
   return (
     <Wrapper>
@@ -43,10 +44,10 @@ export const ListItem = ({ item }: Props) => {
         </Time>
       </MetaWrapper>
       <ControlWrapper>
-        {isInvigilator && (
+        {isStudent && (
           <Link href={`/exam/${item._id}/join`}>
             <Button type="link">
-              <EyeOutlined />
+              <CameraOutlined />
             </Button>
           </Link>
         )}
