@@ -9,6 +9,7 @@ import Head from "next/head";
 import { UserSocketProvider } from "../hooks/useSocket";
 import { UseLayoutProvider } from "../hooks/useLayout";
 import { UseTimeProvider } from "../hooks/useTime";
+import { UseCameraProvider } from "../hooks/useCamera";
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -23,9 +24,11 @@ function MyApp({ Component, pageProps }) {
           <UserSocketProvider>
             <UseTimeProvider>
               <UseLayoutProvider>
-                <Layout>
-                  <Component {...pageProps} />
-                </Layout>
+                <UseCameraProvider>
+                  <Layout>
+                    <Component {...pageProps} />
+                  </Layout>
+                </UseCameraProvider>
               </UseLayoutProvider>
             </UseTimeProvider>
           </UserSocketProvider>

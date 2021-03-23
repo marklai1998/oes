@@ -4,13 +4,13 @@ import { useRouter } from "next/router";
 import { useFetch } from "../../../hooks/useFetch";
 import { getPopulatedExam } from "../../../services/examApi/getPopulatedExam";
 import { useAuth } from "../../../hooks/useAuth";
-import { InvigilatorView } from "../../../containers/invigilatorView";
+import { StudentView } from "../../../containers/studentView";
 
 const JoinExam = () => {
   const {
     query: { id },
   } = useRouter();
-  const { isInvigilator } = useAuth();
+  const { isStudent } = useAuth();
   const { fetchData, data } = useFetch(getPopulatedExam);
 
   useEffect(() => {
@@ -20,9 +20,7 @@ const JoinExam = () => {
   return !data ? (
     <></>
   ) : (
-    <ContentWrapper>
-      {isInvigilator && <InvigilatorView exam={data} />}
-    </ContentWrapper>
+    <ContentWrapper>{isStudent && <StudentView exam={data} />}</ContentWrapper>
   );
 };
 

@@ -14,6 +14,7 @@ import { useAuth } from "../../hooks/useAuth";
 import * as R from "ramda";
 import Link from "next/link";
 import { ExamStatusBadge } from "../../components/ExamStatusBadge";
+import { useCamera } from "../../hooks/useCamera";
 
 type Props = {
   item: PureExam;
@@ -22,6 +23,7 @@ type Props = {
 export const ListItem = ({ item }: Props) => {
   const now = useTime();
   const { isAdmin, user, isStudent } = useAuth();
+  const { hasCameraSupport } = useCamera();
 
   const status = useMemo(() => getExamStatus(now, item), [now, item]);
   const canEdit = user
@@ -44,7 +46,7 @@ export const ListItem = ({ item }: Props) => {
         </Time>
       </MetaWrapper>
       <ControlWrapper>
-        {isStudent && (
+        {isStudent && hasCameraSupport && (
           <Link href={`/exam/${item._id}/join`}>
             <Button type="link">
               <CameraOutlined />
