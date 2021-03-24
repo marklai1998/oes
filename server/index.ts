@@ -52,11 +52,11 @@ const App = async () => {
         }
       )
     );
-
     const koa = new Koa()
       .use(cors())
       .use(bodyParser({}))
       .use(passport.initialize());
+
     koaQs(koa);
     socket(koa);
 

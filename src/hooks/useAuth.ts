@@ -102,5 +102,6 @@ export const [UserAuthProvider, useAuth] = constate(() => {
     isLoggedIn,
     isAuthing: isLoggedIn ? !user : false,
     ...tiers,
+    fetchUser,
   };
 });

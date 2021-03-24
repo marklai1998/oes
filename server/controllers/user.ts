@@ -9,6 +9,9 @@ import {
   validatePassword,
 } from "../repositories/users";
 import { issueJWT } from "../utils/jwt";
+import multer from "@koa/multer";
+import { rename } from "fs/promises";
+import path from "path";
 
 const router = new Router<DefaultState, Context>();
 
@@ -93,5 +96,25 @@ router.get(
     ctx.body = await getUserCount();
   }
 );
+
+const upload = multer({ dest: "public/uploads/icons" });
+router.post("/icon", checkAuth({}), upload.single("image"), async (ctx) => {
+  // {
+  //   fieldname: 'image',
+  //   originalname: '3xbhmo7wvrvih1eho9y1.png',
+  //   encoding: '7bit',
+  //   mimetype: 'image/png',
+  //   destination: 'uploads/',
+  //   filename: '9d855af15ddeb495beb2dc0b2d180ee5',
+  //   path: 'uploads/9d855af15ddeb495beb2dc0b2d180ee5',
+  //   size: 24934
+  // }
+  const image = ctx.file;
+  const appRoot = path.resolve(__dirname, "..", "..");
+  await rename(
+    path.resolve(appRoot, image.destination, image.filename),
+    path.resolve(appRoot, image.destination, String(ctx.state.user._id))
+  );
+});
 
 export default router;

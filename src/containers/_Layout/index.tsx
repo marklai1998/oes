@@ -88,6 +88,7 @@ export const Layout = ({ children }: Props) => {
                     verticalAlign: "middle",
                     cursor: "pointer",
                   }}
+                  src={`/uploads/icons/${user._id}`}
                 >
                   {user.username}
                 </Avatar>
