@@ -92,6 +92,23 @@ export const socket = (koa: Koa) => {
   );
 
   io.on(
+    socketEvent.EXAM_ALERT,
+    (
+      { socket },
+      {
+        examId,
+        peerId,
+        alert,
+      }: { examId: string; peerId: string; alert: string[] }
+    ) => {
+      socket.to(examId).emit(socketEvent.EXAM_ALERT, {
+        peerId,
+        alert,
+      });
+    }
+  );
+
+  io.on(
     socketEvent.RELAY_ICE_CANDIDATE,
     (
       { socket },
