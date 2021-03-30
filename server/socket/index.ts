@@ -92,18 +92,20 @@ export const socket = (koa: Koa) => {
   );
 
   io.on(
-    socketEvent.EXAM_ALERT,
+    socketEvent.PEER_STATUS,
     (
       { socket },
       {
         examId,
         peerId,
         alert,
-      }: { examId: string; peerId: string; alert: string[] }
+        verified,
+      }: { examId: string; peerId: string; alert: string[]; verified: boolean }
     ) => {
-      socket.to(examId).emit(socketEvent.EXAM_ALERT, {
+      socket.to(examId).emit(socketEvent.PEER_STATUS, {
         peerId,
         alert,
+        verified,
       });
     }
   );
