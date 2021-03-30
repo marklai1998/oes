@@ -111,6 +111,29 @@ export const socket = (koa: Koa) => {
   );
 
   io.on(
+    socketEvent.ADD_TRANSCRIPT,
+    (
+      { socket },
+      {
+        examId,
+        peerId,
+        transcript,
+      }: {
+        examId: string;
+        peerId: string;
+        transcript: { transcript: string; confidence: number }[];
+      }
+    ) => {
+      console.log(transcript);
+      socket.to(examId).emit(socketEvent.ADD_TRANSCRIPT, {
+        peerId,
+        transcript,
+        user: socket.user,
+      });
+    }
+  );
+
+  io.on(
     socketEvent.RELAY_ICE_CANDIDATE,
     (
       { socket },
