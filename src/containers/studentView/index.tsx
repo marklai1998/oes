@@ -10,9 +10,10 @@ import { useTime } from "../../hooks/useTime";
 import { dayjs } from "../../../server/utils/dayjs";
 import { useMount } from "react-use";
 import DecibelMeter from "decibel-meter";
-import debounce from "debounce";
 import { useSocket } from "../../hooks/useSocket";
 import { socketEvent } from "../../../server/constants/socketEvent";
+import { Button } from "antd";
+import Link from "next/link";
 
 type Props = { exam: PopulatedExam };
 
@@ -80,12 +81,17 @@ export const StudentView = ({ exam }: Props) => {
   return (
     <>
       <Info>
-        <div>Joined Exam: {exam.name}</div>
-        <TimeWrapper>
-          <Time>{dayjsTime.format("hh:mm:ss")}</Time>
-          {dayjsTime.format("A")}
-          <Date>{dayjsTime.format("YYYY-MM-DD")}</Date>
-        </TimeWrapper>
+        <div>
+          <div>Joined Exam: {exam.name}</div>
+          <TimeWrapper>
+            <Time>{dayjsTime.format("hh:mm:ss")}</Time>
+            {dayjsTime.format("A")}
+            <Date>{dayjsTime.format("YYYY-MM-DD")}</Date>
+          </TimeWrapper>
+        </div>
+        <Link href={`/exam/${exam._id}/submit`}>
+          <Button type="primary">Submit Exam</Button>
+        </Link>
       </Info>
       <Spacer />
       <VideoWrapper>
@@ -99,6 +105,11 @@ const Info = styled(Box)`
   color: #1890ff;
   font-size: 20px;
   padding: 8px 16px;
+  display: flex;
+
+  & div {
+    width: 100%;
+  }
 `;
 
 const VideoWrapper = styled(Box)`
@@ -118,4 +129,9 @@ const Time = styled.span`
 const Date = styled.div`
   font-size: 12px;
   color: #575757;
+`;
+
+const SubmitButton = styled(Button)`
+  float: right;
+  bottom: 0;
 `;
