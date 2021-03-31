@@ -8,12 +8,16 @@ export const createExamSubmission = async (
   userId: string,
   data: PureExamSubmission
 ) => {
-  const count = await examSubmission.countDocuments({ examId, userId });
+  const largestItem = await examSubmission
+    .find({ examId, userId })
+    .sort({ price: -1 })
+    .limit(1);
+
   return await examSubmission.create({
     ...data,
     examId,
     userId,
-    order: count + 1,
+    order: largestItem.length ? largestItem[0].order + 1 : 1,
   });
 };
 
