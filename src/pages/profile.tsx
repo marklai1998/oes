@@ -26,6 +26,7 @@ const Profile = () => {
       window.location.reload();
     },
   });
+  
   return (
     <ContentWrapper>
       {user && (
