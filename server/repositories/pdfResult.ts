@@ -4,6 +4,7 @@ import fs, { readFileSync, writeFileSync } from "fs";
 import { v4 as uuid } from "uuid";
 import { getExamSubmission } from "./examSubmission";
 import { PDFDocument } from "pdf-lib";
+import jimp from "jimp";
 const appRoot = path.resolve(__dirname, "..", "..");
 
 export const generatePDF = async (examId: string, userId: string) => {
@@ -25,7 +26,13 @@ export const generatePDF = async (examId: string, userId: string) => {
     submissions.map(async ({ path: imgPath }) => {
       const page = pdfDoc.addPage();
 
-      const imageBuffer = readFileSync(path.resolve(appRoot, imgPath));
+      const image = await jimp.read(path.resolve(appRoot, imgPath));
+      const imageBuffer = await image
+        .clone()
+        .normalize()
+        .brightness(0.1)
+        .contrast(0.5)
+        .getBufferAsync(jimp.MIME_PNG);
 
       const img = await pdfDoc.embedPng(imageBuffer);
       const imgDims = img.scaleToFit(page.getWidth(), page.getHeight());
