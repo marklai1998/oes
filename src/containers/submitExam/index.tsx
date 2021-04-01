@@ -36,7 +36,7 @@ export const SubmitExam = ({ exam, setSubmissions, submissions }: Props) => {
     noClick: true,
     noKeyboard: true,
     multiple: false,
-    accept: "image/*",
+    accept: "image/png",
     onDropAccepted: async (file) => {
       const { success, result } = await handleAddSubmission(exam._id, file[0]);
       if (success && result) {

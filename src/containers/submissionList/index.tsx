@@ -50,7 +50,6 @@ export const SubmissionList = ({ exam }: Props) => {
 
     if (success && result) {
       window.open(`/uploads/pdf/${result}.pdf`, "_blank");
-      console.log(result);
     }
   };
 
