@@ -23,6 +23,7 @@ import {
   listSubmission,
 } from "../../repositories/examSubmission";
 import * as R from "ramda";
+import { generatePDF } from "../../repositories/pdfResult";
 
 const router = new Router<DefaultState, Context>();
 
@@ -207,5 +208,20 @@ router.patch("/:id/submission", checkAuth({}), async (ctx) => {
 
   ctx.body = "SUCCESS";
 });
+
+router.get(
+  "/:id/submission/:userId/pdf",
+  checkAuth({ tiers: [userTierType.ADMIN, userTierType.TEACHER] }),
+  async (ctx) => {
+    const user = ctx.state.user;
+
+    if (!(await hasEditPermission(ctx.params.id, user))) {
+      ctx.throw(401, "EXAM_NOT_FOUND");
+      return;
+    }
+
+    ctx.body = await generatePDF(ctx.params.id, ctx.params.userId);
+  }
+);
 
 export default router;

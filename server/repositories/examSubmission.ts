@@ -23,7 +23,7 @@ export const createExamSubmission = async (
 };
 
 export const getExamSubmission = async (examId: string, userId: string) =>
-  examSubmission.find({ examId, userId }).sort({ order: 1 });
+  examSubmission.find({ examId, userId }).sort({ order: 1 }).lean();
 
 export const hasRemovePermission = async (
   examId: string,
@@ -54,8 +54,6 @@ export const updateSubmission = async (
 };
 
 export const listSubmission = async (examId: string) => {
-  console.log(examId);
-
   return examSubmission
     .aggregate([
       { $match: { examId: mongoose.Types.ObjectId(examId) } },

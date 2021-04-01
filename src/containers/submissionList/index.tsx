@@ -1,4 +1,4 @@
-import { Table } from "antd";
+import { Button, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import React, { useEffect } from "react";
 import styled from "styled-components";
@@ -13,24 +13,46 @@ import {
   listSubmission,
   SubmissionItem,
 } from "../../services/examApi/listSubmission";
+import { DownloadOutlined } from "@ant-design/icons";
+import { getSubmissionPDF } from "../../services/examApi/getSubmissionPDF";
 
 type Props = { exam: PopulatedExam };
 
-const column: ColumnsType<SubmissionItem> = [
+const column = (
+  onDownloadClick: (userId: string) => void
+): ColumnsType<SubmissionItem> => [
   { dataIndex: "username", title: "User" },
   { title: "File Count", render: (_, { images }) => images.length },
+  {
+    dataIndex: "_id",
+    title: "Download PDF",
+    render: (userId) => (
+      <Button type="link" onClick={() => onDownloadClick(userId)}>
+        <DownloadOutlined />
+      </Button>
+    ),
+  },
 ];
 
 export const SubmissionList = ({ exam }: Props) => {
-  const { fetchData, data } = useFetch(listSubmission);
+  const { fetchData: handleListSubmission, data } = useFetch(listSubmission);
+  const { fetchData: getPDF } = useFetch(getSubmissionPDF);
+
   const now = useTime();
   const status = getExamStatus(now, exam);
 
   useEffect(() => {
-    fetchData(exam._id);
+    handleListSubmission(exam._id);
   }, []);
 
-  console.log(data);
+  const onDownloadClick = async (userId: string) => {
+    const { success, result } = await getPDF(exam._id, userId);
+
+    if (success && result) {
+      window.open(`/uploads/pdf/${result}.pdf`, "_blank");
+      console.log(result);
+    }
+  };
 
   return (
     <>
@@ -43,7 +65,7 @@ export const SubmissionList = ({ exam }: Props) => {
       <Spacer />
       <Table
         dataSource={data || []}
-        columns={column}
+        columns={column(onDownloadClick)}
         pagination={false}
         size="small"
       />
