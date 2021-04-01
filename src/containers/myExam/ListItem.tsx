@@ -5,6 +5,7 @@ import {
   FieldTimeOutlined,
   EditOutlined,
   CameraOutlined,
+  CopyOutlined,
 } from "@ant-design/icons";
 import { dayjs } from "../../../server/utils/dayjs";
 import { Button } from "antd";
@@ -50,6 +51,13 @@ export const ListItem = ({ item }: Props) => {
           <Link href={`/exam/${item._id}/join`}>
             <Button type="link">
               <CameraOutlined />
+            </Button>
+          </Link>
+        )}
+        {canEdit && (
+          <Link href={`/exam/${item._id}/submit`}>
+            <Button type="link">
+              <CopyOutlined />
             </Button>
           </Link>
         )}

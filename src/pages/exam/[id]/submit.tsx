@@ -7,6 +7,7 @@ import { useAuth } from "../../../hooks/useAuth";
 import { SubmitExam } from "../../../containers/submitExam";
 import { PureExamSubmission } from "../../../../server/models/examSubmission";
 import { getSubmission } from "../../../services/examApi/getSubmission";
+import { SubmissionList } from "../../../containers/submissionList";
 
 const JoinExam = () => {
   const {
@@ -35,12 +36,14 @@ const JoinExam = () => {
     <></>
   ) : (
     <ContentWrapper>
-      {isStudent && (
+      {isStudent ? (
         <SubmitExam
           exam={exam}
           submissions={submissions}
           setSubmissions={setSubmissions}
         />
+      ) : (
+        <SubmissionList exam={exam} />
       )}
     </ContentWrapper>
   );

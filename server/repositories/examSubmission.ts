@@ -2,6 +2,7 @@ import { userTierType } from "../constants/userTierType";
 import { PureUser } from "../models/user";
 import examSubmission, { PureExamSubmission } from "./../models/examSubmission";
 import * as R from "ramda";
+import mongoose from "mongoose";
 
 export const createExamSubmission = async (
   examId: string,
@@ -50,4 +51,42 @@ export const updateSubmission = async (
       examSubmission.findOneAndUpdate({ examId: id, _id }, { order })
     )
   );
+};
+
+export const listSubmission = async (examId: string) => {
+  console.log(examId);
+
+  return examSubmission
+    .aggregate([
+      { $match: { examId: mongoose.Types.ObjectId(examId) } },
+      {
+        $group: {
+          _id: "$userId",
+          images: { $push: "$$ROOT" },
+        },
+      },
+      {
+        $lookup: {
+          from: "user",
+          localField: "_id",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          images: 1,
+          user: { $arrayElemAt: ["$user", 0] },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          images: 1,
+          username: "$user.username",
+        },
+      },
+    ])
+    .exec();
 };

@@ -20,6 +20,7 @@ import {
   hasRemovePermission,
   deleteExamSubmission,
   updateSubmission,
+  listSubmission,
 } from "../../repositories/examSubmission";
 import * as R from "ramda";
 
@@ -157,6 +158,21 @@ router.get("/:id/submission", checkAuth({}), async (ctx) => {
   ctx.body = await getExamSubmission(ctx.params.id, user._id);
 });
 
+router.get(
+  "/:id/submission/list",
+  checkAuth({ tiers: [userTierType.ADMIN, userTierType.TEACHER] }),
+  async (ctx) => {
+    const user = ctx.state.user;
+
+    if (!(await hasEditPermission(ctx.params.id, user))) {
+      ctx.throw(401, "EXAM_NOT_FOUND");
+      return;
+    }
+
+    ctx.body = await listSubmission(ctx.params.id);
+  }
+);
+
 router.delete("/:id/submission/:image", checkAuth({}), async (ctx) => {
   const user = ctx.state.user;
 
@@ -179,8 +195,7 @@ router.patch("/:id/submission", checkAuth({}), async (ctx) => {
 
   const permissionList = await Promise.all(
     body.map(
-      async ({ _id }) =>
-        await hasRemovePermission(ctx.params.id, _id, user)
+      async ({ _id }) => await hasRemovePermission(ctx.params.id, _id, user)
     )
   );
   if (R.any((hasPermission) => !hasPermission, permissionList)) {
