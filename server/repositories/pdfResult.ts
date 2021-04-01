@@ -22,17 +22,17 @@ export const generatePDF = async (examId: string, userId: string) => {
 
   const pdfDoc = await PDFDocument.create();
 
-  await Promise.all(
+  const imageArray = await Promise.all(
     submissions.map(async ({ path: imgPath }) => {
-      const page = pdfDoc.addPage();
-
       const image = await jimp.read(path.resolve(appRoot, imgPath));
-      const imageBuffer = await image
-        .clone()
-        .normalize()
-        .contrast(0.3)
-        .getBufferAsync(jimp.MIME_PNG);
+      return image.contrast(0.3).getBufferAsync(jimp.MIME_PNG);
+    })
+  );
 
+  await Promise.all(
+    imageArray.map(async (imageBuffer) => {
+      const page = pdfDoc.addPage();
+      
       const img = await pdfDoc.embedPng(imageBuffer);
       const imgDims = img.scaleToFit(page.getWidth(), page.getHeight());
 
