@@ -30,8 +30,7 @@ export const generatePDF = async (examId: string, userId: string) => {
       const imageBuffer = await image
         .clone()
         .normalize()
-        .brightness(0.1)
-        .contrast(0.5)
+        .contrast(0.3)
         .getBufferAsync(jimp.MIME_PNG);
 
       const img = await pdfDoc.embedPng(imageBuffer);
