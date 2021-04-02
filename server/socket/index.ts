@@ -134,6 +134,19 @@ export const socket = (koa: Koa) => {
   );
 
   io.on(
+    socketEvent.CHAT_MESSAGE,
+    ({ socket }, { examId, message }: { examId: string; message: string }) => {
+      console.log("message", examId, message);
+
+      socket.to(examId).emit(socketEvent.CHAT_MESSAGE, {
+        message,
+        timestamp: dayjs().toISOString(),
+        username: socket.user.username,
+      });
+    }
+  );
+
+  io.on(
     socketEvent.RELAY_ICE_CANDIDATE,
     (
       { socket },

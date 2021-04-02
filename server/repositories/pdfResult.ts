@@ -1,6 +1,6 @@
 import pdfResult from "../models/pdfResult";
 import path from "path";
-import fs, { readFileSync, writeFileSync } from "fs";
+import fs, { writeFileSync } from "fs";
 import { v4 as uuid } from "uuid";
 import { getExamSubmission } from "./examSubmission";
 import { PDFDocument } from "pdf-lib";
@@ -32,7 +32,7 @@ export const generatePDF = async (examId: string, userId: string) => {
   await Promise.all(
     imageArray.map(async (imageBuffer) => {
       const page = pdfDoc.addPage();
-      
+
       const img = await pdfDoc.embedPng(imageBuffer);
       const imgDims = img.scaleToFit(page.getWidth(), page.getHeight());
 
