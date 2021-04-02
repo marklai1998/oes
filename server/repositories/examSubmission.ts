@@ -3,6 +3,9 @@ import { PureUser } from "../models/user";
 import examSubmission, { PureExamSubmission } from "./../models/examSubmission";
 import * as R from "ramda";
 import mongoose from "mongoose";
+import fs from "fs";
+import path from "path";
+const appRoot = path.resolve(__dirname, "..", "..");
 
 export const createExamSubmission = async (
   examId: string,
@@ -39,8 +42,11 @@ export const hasRemovePermission = async (
   return !R.isNil(result);
 };
 
-export const deleteExamSubmission = async (examId: string, imageId: string) =>
+export const deleteExamSubmission = async (examId: string, imageId: string) => {
+  const image = await examSubmission.findOne({ examId, _id: imageId }).lean();
+  fs.unlinkSync(path.resolve(appRoot, image.path));
   examSubmission.findOneAndRemove({ examId, _id: imageId });
+};
 
 export const updateSubmission = async (
   id: string,

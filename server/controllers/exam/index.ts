@@ -13,19 +13,21 @@ import { Context, DefaultState } from "koa";
 import { userTierType } from "../../constants/userTierType";
 import { checkAuth } from "../../middlewares/checkAuth";
 import { dayjs } from "../../utils/dayjs";
-import multer from "@koa/multer";
-import {
-  createExamSubmission,
-  getExamSubmission,
-  hasRemovePermission,
-  deleteExamSubmission,
-  updateSubmission,
-  listSubmission,
-} from "../../repositories/examSubmission";
-import * as R from "ramda";
-import { generatePDF } from "../../repositories/pdfResult";
 
-const router = new Router<DefaultState, Context>();
+import submissionRouter from "./submission";
+import resourcesRouter from "./resources";
+
+const router = new Router<DefaultState, Context>()
+  .use(
+    "/:id/submission",
+    submissionRouter.routes(),
+    submissionRouter.allowedMethods()
+  )
+  .use(
+    "/:id/resources",
+    resourcesRouter.routes(),
+    resourcesRouter.allowedMethods()
+  );
 
 router.post(
   "/",
@@ -129,98 +131,6 @@ router.patch(
     await updateExam(ctx.params.id, body);
 
     ctx.body = "SUCCESS";
-  }
-);
-
-const upload = multer({ dest: "public/uploads/submission" });
-router.post(
-  "/:id/submission",
-  checkAuth({}),
-  upload.single("image"),
-  async (ctx) => {
-    const user = ctx.state.user;
-    // {
-    //   fieldname: 'image',
-    //   originalname: '3xbhmo7wvrvih1eho9y1.png',
-    //   encoding: '7bit',
-    //   mimetype: 'image/png',
-    //   destination: 'uploads/',
-    //   filename: '9d855af15ddeb495beb2dc0b2d180ee5',
-    //   path: 'uploads/9d855af15ddeb495beb2dc0b2d180ee5',
-    //   size: 24934
-    // }
-    const image = ctx.file;
-    ctx.body = await createExamSubmission(ctx.params.id, user._id, image);
-  }
-);
-
-router.get("/:id/submission", checkAuth({}), async (ctx) => {
-  const user = ctx.state.user;
-  ctx.body = await getExamSubmission(ctx.params.id, user._id);
-});
-
-router.get(
-  "/:id/submission/list",
-  checkAuth({ tiers: [userTierType.ADMIN, userTierType.TEACHER] }),
-  async (ctx) => {
-    const user = ctx.state.user;
-
-    if (!(await hasEditPermission(ctx.params.id, user))) {
-      ctx.throw(401, "EXAM_NOT_FOUND");
-      return;
-    }
-
-    ctx.body = await listSubmission(ctx.params.id);
-  }
-);
-
-router.delete("/:id/submission/:image", checkAuth({}), async (ctx) => {
-  const user = ctx.state.user;
-
-  if (!(await hasRemovePermission(ctx.params.id, ctx.params.image, user))) {
-    ctx.throw(401, "RESOURCES_NOT_FOUND");
-    return;
-  }
-
-  await deleteExamSubmission(ctx.params.id, ctx.params.image);
-
-  ctx.body = "SUCCESS";
-});
-
-router.patch("/:id/submission", checkAuth({}), async (ctx) => {
-  const user = ctx.state.user;
-
-  const {
-    request: { body },
-  } = ctx;
-
-  const permissionList = await Promise.all(
-    body.map(
-      async ({ _id }) => await hasRemovePermission(ctx.params.id, _id, user)
-    )
-  );
-  if (R.any((hasPermission) => !hasPermission, permissionList)) {
-    ctx.throw(401, "RESOURCES_NOT_FOUND");
-    return;
-  }
-
-  await updateSubmission(ctx.params.id, body);
-
-  ctx.body = "SUCCESS";
-});
-
-router.get(
-  "/:id/submission/:userId/pdf",
-  checkAuth({ tiers: [userTierType.ADMIN, userTierType.TEACHER] }),
-  async (ctx) => {
-    const user = ctx.state.user;
-
-    if (!(await hasEditPermission(ctx.params.id, user))) {
-      ctx.throw(401, "EXAM_NOT_FOUND");
-      return;
-    }
-
-    ctx.body = await generatePDF(ctx.params.id, ctx.params.userId);
   }
 );
 

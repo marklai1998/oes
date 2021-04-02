@@ -10,6 +10,7 @@ import { useTime } from "../../hooks/useTime";
 import { updateExam } from "../../services/examApi/updateExam";
 import { BasicInfo } from "./BasicInfo";
 import { Header } from "./Header";
+import { Resources } from "./Resources";
 import { UserManagement } from "./UserManagement";
 
 type Props = { initialValue: PureExam };
@@ -62,6 +63,8 @@ export const ExamEditor = ({ initialValue }: Props) => {
       <BasicInfo data={exam} onSave={handleFormChange} locked={locked} />
       <Spacer />
       <UserManagement data={exam} onSave={handleFormChange} locked={locked} />
+      <Spacer />
+      <Resources exam={exam} />
     </>
   );
 };
