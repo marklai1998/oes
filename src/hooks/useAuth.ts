@@ -88,9 +88,9 @@ export const [UserAuthProvider, useAuth] = constate(() => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      R.includes(pathname, ["/login", "/register"]) && Router.push("/");
+      R.includes(pathname, ["/login", "/signup"]) && Router.push("/");
     } else {
-      !R.includes(pathname, ["/login", "/register"]) && Router.push("/login");
+      !R.includes(pathname, ["/login", "/signup"]) && Router.push("/login");
     }
   }, [isLoggedIn, pathname]);
 
