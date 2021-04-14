@@ -10,7 +10,7 @@ export const [UserSocketProvider, useSocket] = constate(() => {
   useEffect(() => {
     const token = localStorage.getItem("id_token");
     setSocket(
-      io("http://localhost:3000", {
+      io("", {
         extraHeaders: {
           Authorization: `Bearer ${token}`,
         },
