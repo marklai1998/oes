@@ -35,7 +35,7 @@ export const UserManagement = ({ data, onSave, locked }: Props) => {
           requiredMark={false}
           form={form}
         >
-          <Form.Item label="Attendee" name="invigilator">
+          <Form.Item label="Invigilator" name="invigilator">
             <UserPicker tier={[userTierType.ADMIN, userTierType.TEACHER]} />
           </Form.Item>
           <Form.Item label="Attendee" name="attendee">
