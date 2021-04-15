@@ -5,14 +5,20 @@ import { v4 as uuid } from "uuid";
 import { getExamSubmission } from "./examSubmission";
 import { PDFDocument } from "pdf-lib";
 import jimp from "jimp";
-const appRoot = path.resolve(__dirname, "..", "..");
+import appRoot from "app-root-path";
 
 export const generatePDF = async (examId: string, userId: string) => {
   const item = await pdfResult.findOne({ examId, userId }).lean();
 
   if (item) {
     fs.unlinkSync(
-      path.resolve(appRoot, "public", "uploads", "pdf", `${item.fileId}.pdf`)
+      path.resolve(
+        appRoot.toString(),
+        "public",
+        "uploads",
+        "pdf",
+        `${item.fileId}.pdf`
+      )
     );
     await pdfResult.findOneAndDelete({ examId, userId });
   }
@@ -24,7 +30,7 @@ export const generatePDF = async (examId: string, userId: string) => {
 
   const imageArray = await Promise.all(
     submissions.map(async ({ path: imgPath }) => {
-      const image = await jimp.read(path.resolve(appRoot, imgPath));
+      const image = await jimp.read(path.resolve(appRoot.toString(), imgPath));
       return image.contrast(0.3).getBufferAsync(jimp.MIME_PNG);
     })
   );
@@ -48,7 +54,13 @@ export const generatePDF = async (examId: string, userId: string) => {
   const pdfBytes = await pdfDoc.save();
 
   writeFileSync(
-    path.resolve(appRoot, "public", "uploads", "pdf", `${fileId}.pdf`),
+    path.resolve(
+      appRoot.toString(),
+      "public",
+      "uploads",
+      "pdf",
+      `${fileId}.pdf`
+    ),
     pdfBytes,
     { flag: "wx" }
   );

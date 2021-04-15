@@ -1,7 +1,7 @@
 import examResources, { PureExamResources } from "../models/examResources";
 import fs from "fs";
 import path from "path";
-const appRoot = path.resolve(__dirname, "..", "..");
+import appRoot from "app-root-path";
 
 export const createExamResources = async (
   examId: string,
@@ -27,8 +27,8 @@ export const deleteExamResources = async (
   resourcesId: string
 ) => {
   const file = await examResources.findOne({ examId, _id: resourcesId }).lean();
-  fs.unlinkSync(path.resolve(appRoot, file.path));
-  examResources.findOneAndRemove({ examId, _id: resourcesId });
+  fs.unlinkSync(path.resolve(appRoot.toString(), file.path));
+  await examResources.findByIdAndRemove(resourcesId);
 };
 
 export const updateResources = async (

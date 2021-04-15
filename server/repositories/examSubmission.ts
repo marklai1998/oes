@@ -5,7 +5,7 @@ import * as R from "ramda";
 import mongoose from "mongoose";
 import fs from "fs";
 import path from "path";
-const appRoot = path.resolve(__dirname, "..", "..");
+import appRoot from "app-root-path";
 
 export const createExamSubmission = async (
   examId: string,
@@ -44,8 +44,8 @@ export const hasRemovePermission = async (
 
 export const deleteExamSubmission = async (examId: string, imageId: string) => {
   const image = await examSubmission.findOne({ examId, _id: imageId }).lean();
-  fs.unlinkSync(path.resolve(appRoot, image.path));
-  examSubmission.findOneAndRemove({ examId, _id: imageId });
+  fs.unlinkSync(path.resolve(appRoot.toString(), image.path));
+  await examSubmission.findByIdAndRemove(imageId);
 };
 
 export const updateSubmission = async (
